@@ -4,35 +4,34 @@ import 'package:flutter/material.dart';
 
 void main() async {
   //integracion con firebase
-  WidgetsFlutterBinding.ensureInitialized();  
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey:
-          "AIzaSyDi4PKYKwpSLtfrpV5nPgTd_p0fs_VDPu0", // paste your api key here
-      appId:
-          "com.example.chatlynx", //paste your app id here
-      messagingSenderId: "843525052315", //paste your messagingSenderId here
-      projectId: "chat-82a68", //paste your project id here
+      apiKey: "AIzaSyDi4PKYKwpSLtfrpV5nPgTd_p0fs_VDPu0",
+      appId: "com.example.chatlynx",
+      messagingSenderId: "843525052315",
+      projectId: "chat-82a68",
     ),
   );
 
   runApp(MyApp());
-} 
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const WelcomeScreen(),
+      routes: {
+        "/welcome": (BuildContext context) => const WelcomeScreen(),
+      },
     );
   }
 }

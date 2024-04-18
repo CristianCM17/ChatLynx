@@ -34,12 +34,15 @@ class ButtonGoogle extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: CircleBorder(),
+                color: Colors.black.withOpacity(0.3),
+                shape: const CircleBorder(),
               ),
               child: Image.asset("assets/g_logo.png")),
+          const SizedBox(
+            height: 10,
+          ),
           Text(
             "Google",
             style: GoogleFonts.dmSans(

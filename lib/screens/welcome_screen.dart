@@ -14,123 +14,86 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.blue.shade900, Colors.black],
-            ),
-          ),
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.only(top: 60),
-                width: MediaQuery.of(context).size.width * .8,
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Conecta\n',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 68,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'Linces\n',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 68,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'Facil ',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 68,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '&\n',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 68,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'Rapido',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 68,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width * .8,
-                margin: EdgeInsets.symmetric(vertical: 40),
-                child: Text(
-                  'Nuestro chat app es el camino perfecto para estar conectados como comunidad estudiantil.',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              ButtonGoogle(),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 40),
-                child: GestureDetector(
-                  onTap: (){
-                    
-                  },
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Existing account? ',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w400,
-                            height: 0.07,
-                            letterSpacing: 0.10,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'Log in',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w700,
-                            height: 0.07,
-                            letterSpacing: 0.10,
-                          ),
-                        ),
-                      ],
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        image: const DecorationImage(
+          image: AssetImage("assets/fondo_ws.png"),
+          fit: BoxFit.cover,
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.green.shade900, Colors.black.withOpacity(0.9)],
+        ),
+      ),
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(left: 20, right: 20, top: 60),
+            width: MediaQuery.of(context).size.width * .8,
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Conecta Linces Fácil & Rápido',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 68,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 1,
                     ),
                   ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+            child: Text(
+              'Nuestro chat app es el camino perfecto para estar conectados como comunidad estudiantil.',
+              style: GoogleFonts.poppins(
+                color: Colors.white.withOpacity(0.5),
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 80,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                "assets/divider.png",
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+              Text(
+                'INICIA SESIÓN',
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  height: 0.07,
+                  letterSpacing: 0.10,
                 ),
-              )
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+              Image.asset(
+                "assets/divider.png",
+              ),
             ],
           ),
-        ));
+          const SizedBox(
+            height: 30,
+          ),
+          const ButtonGoogle(),
+        ],
+      ),
+    ));
   }
 }
