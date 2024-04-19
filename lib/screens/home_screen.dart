@@ -16,12 +16,29 @@ class _HomePageState extends State<HomePage> {
   final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
 
   static const List<Widget> _widgetOptions = <Widget>[
-    ConversationWidget(),
+    Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 15),
+          child: ConversationWidget(),
+        ),
+        ConversationWidget(),
+      ],
+    ),
     Text(
       'Placeholder para la página de llamadas',
       style: TextStyle(fontSize: 24, color: Colors.white),
     ),
-    ContactWidget(),
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 15),
+          child: ContactWidget(),
+        ),
+        ContactWidget()
+      ],
+    ),
   ];
 
   @override
