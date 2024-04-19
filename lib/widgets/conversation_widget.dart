@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ConversationWidget extends StatefulWidget {
   const ConversationWidget({super.key});
@@ -31,9 +32,9 @@ class _ConversationWidgetState extends State<ConversationWidget> {
               ),
             ),
           ),
-          Positioned(
-            left: 260,
-            top: 9,
+          Container(
+            margin: EdgeInsets.only(top: 6),
+            alignment: Alignment.topRight,
             child: Text(
               '2 min ago',
               textAlign: TextAlign.right,
