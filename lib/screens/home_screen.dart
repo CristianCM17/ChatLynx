@@ -1,7 +1,10 @@
 import 'package:chatlynx/services/google_auth_firebase.dart';
+import 'package:chatlynx/widgets/calls_widget.dart';
 import 'package:chatlynx/widgets/contact_widget.dart';
 import 'package:chatlynx/widgets/conversation_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,28 +19,52 @@ class _HomePageState extends State<HomePage> {
   final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
 
   static const List<Widget> _widgetOptions = <Widget>[
-    Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(bottom: 15),
-          child: ConversationWidget(),
-        ),
-        ConversationWidget(),
-      ],
+    SingleChildScrollView(
+      child: Column(
+        children: [
+          ConversationWidget(),
+          ConversationWidget(),
+          ConversationWidget(),
+          ConversationWidget(),
+          ConversationWidget(),
+          ConversationWidget(),
+          ConversationWidget(),
+          ConversationWidget(),
+          ConversationWidget(),
+          ConversationWidget(),
+          ConversationWidget(),
+        ],
+      ),
     ),
-    Text(
-      'Placeholder para la página de llamadas',
-      style: TextStyle(fontSize: 24, color: Colors.white),
+    SingleChildScrollView(
+      child: Column(
+        children: [
+          CallsWidget(),
+          CallsWidget(),
+          CallsWidget(),
+          CallsWidget(),
+          CallsWidget(),
+          CallsWidget(),
+        ],
+      ),
     ),
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(bottom: 15),
-          child: ContactWidget(),
-        ),
-        ContactWidget()
-      ],
+    SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ContactWidget(),
+          ContactWidget(),
+          ContactWidget(),
+          ContactWidget(),
+          ContactWidget(),
+          ContactWidget(),
+          ContactWidget(),
+          ContactWidget(),
+          ContactWidget(),
+          ContactWidget(),
+          ContactWidget()
+        ],
+      ),
     ),
   ];
 
@@ -76,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                 _selectedIndex == 0
                     ? "ChatLynx"
                     : _selectedIndex == 1
-                        ? "Llamadas"
+                        ? "Videollamadas"
                         : "Contactos",
                 style: GoogleFonts.poppins(
                     fontSize: 26, fontWeight: FontWeight.w300),
@@ -89,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.white.withOpacity(0.2),
                 ),
                 child: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.search,
                       size: 32,
                     ),
@@ -114,14 +141,15 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-         Positioned(
+          Positioned(
             top: MediaQuery.of(context).padding.top +
-                kToolbarHeight+ 20, // Posición desde la parte superior
+                kToolbarHeight +
+                20, // Posición desde la parte superior
             left: 0,
             right: 0,
             bottom: 0, // Ocupará todo el espacio disponible debajo del AppBar
             child: Container(
-              padding: EdgeInsets.all(20),
+              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
               child: _widgetOptions.elementAt(_selectedIndex),
             ),
           )
@@ -136,8 +164,8 @@ class _HomePageState extends State<HomePage> {
               label: 'Mensajes',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.phone_outlined),
-              label: 'Llamadas',
+              icon: Icon(Icons.video_camera_front_outlined),
+              label: 'VideoLlamadas',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.contacts_outlined),
