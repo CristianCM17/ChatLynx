@@ -1,4 +1,5 @@
 import 'package:chatlynx/services/google_auth_firebase.dart';
+import 'package:chatlynx/widgets/contact_widget.dart';
 import 'package:chatlynx/widgets/conversation_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,10 +21,7 @@ class _HomePageState extends State<HomePage> {
       'Placeholder para la página de llamadas',
       style: TextStyle(fontSize: 24, color: Colors.white),
     ),
-    Text(
-      'Placeholder para la página de contactos',
-      style: TextStyle(fontSize: 24, color: Colors.white),
-    ),
+    ContactWidget(),
   ];
 
   @override
