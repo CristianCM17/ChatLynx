@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
 
   static const List<Widget> _widgetOptions = <Widget>[
+    //MENSAJES
     SingleChildScrollView(
       child: Column(
         children: [
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     ),
+    //VIDEOLLAMADAS
     SingleChildScrollView(
       child: Column(
         children: [
@@ -48,6 +50,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     ),
+    //CONTACTOS
     SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,6 +192,20 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
+      //Añadimos btn a zona de contactos
+      floatingActionButton: _selectedIndex == 2
+          ? FloatingActionButton(
+              backgroundColor: Colors.green[500],
+              onPressed: () {},
+              child: Icon(
+                Icons.person_add,
+                size: 32,
+              ),
+              elevation: 4,
+              tooltip: 'Agregar contacto nuevo',
+              splashColor: Colors.green[300],
+            )
+          : null,
     );
   }
 }
