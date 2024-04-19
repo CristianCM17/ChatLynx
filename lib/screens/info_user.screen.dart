@@ -13,7 +13,7 @@ class InfoUser extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
-        margin: const EdgeInsets.only(top: 60),
+        margin: const EdgeInsets.only(top: 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
