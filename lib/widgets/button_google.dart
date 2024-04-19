@@ -8,6 +8,7 @@ class ButtonGoogle extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
+        Navigator.pushNamed(context, "/home");
         /* auth_google.loginWithGoogle().then((value) {
                   if (value) {
                     Navigator.push(

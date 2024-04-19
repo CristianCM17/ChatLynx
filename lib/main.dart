@@ -1,3 +1,4 @@
+import 'package:chatlynx/screens/home_screen.dart';
 import 'package:chatlynx/screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -25,12 +26,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
       home: const WelcomeScreen(),
       routes: {
         "/welcome": (BuildContext context) => const WelcomeScreen(),
+        "/home": (BuildContext context) => const HomePage(),
       },
     );
   }
