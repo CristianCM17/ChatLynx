@@ -1,4 +1,5 @@
 import 'package:chatlynx/services/google_auth_firebase.dart';
+import 'package:chatlynx/widgets/conversation_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,10 +15,7 @@ class _HomePageState extends State<HomePage> {
   final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
 
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Placeholder para la página de mensajes',
-      style: TextStyle(fontSize: 24, color: Colors.white),
-    ),
+    ConversationWidget(),
     Text(
       'Placeholder para la página de llamadas',
       style: TextStyle(fontSize: 24, color: Colors.white),
@@ -101,8 +99,16 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Center(
-            child: _widgetOptions.elementAt(_selectedIndex),
+         Positioned(
+            top: MediaQuery.of(context).padding.top +
+                kToolbarHeight+ 20, // Posición desde la parte superior
+            left: 0,
+            right: 0,
+            bottom: 0, // Ocupará todo el espacio disponible debajo del AppBar
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: _widgetOptions.elementAt(_selectedIndex),
+            ),
           )
         ],
       ),
