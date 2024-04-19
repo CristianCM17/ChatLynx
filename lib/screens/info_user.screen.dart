@@ -34,7 +34,7 @@ class InfoUser extends StatelessWidget {
               ),
             ),
             Dialog(
-              surfaceTintColor: Colors.lightGreenAccent,
+              surfaceTintColor: Colors.green,
               shadowColor: Colors.green,
               elevation: 120,
               backgroundColor: Colors.white,

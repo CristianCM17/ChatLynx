@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                 InkWell(
                   borderRadius: BorderRadius.circular(20),
                   onTap: () {
-                    authGoogle.loginWithGoogle().then((userInfo) {
+                    authGoogle.loginWithGoogle(context).then((userInfo) {
                       Navigator.pushNamed(context, "/infoUser",
                           arguments: userInfo);
                     });

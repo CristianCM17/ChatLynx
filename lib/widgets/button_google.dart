@@ -15,7 +15,7 @@ class _ButtonGoogleState extends State<ButtonGoogle> {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        authGoogle.loginWithGoogle().then((userInfo) {
+        authGoogle.loginWithGoogle(context).then((userInfo) {
           if (userInfo != null) {
             Navigator.pushNamed(context, "/home", arguments: userInfo);
 

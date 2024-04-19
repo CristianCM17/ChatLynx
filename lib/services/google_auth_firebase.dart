@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthFirebase {
@@ -20,16 +22,47 @@ class GoogleAuthFirebase {
   }
 
   // LOGIN
-  Future<Map<String, dynamic>?> loginWithGoogle() async {
+  Future<Map<String, dynamic>?> loginWithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
       if (googleUser == null) {
         print("Inicio de sesión con Google cancelado por el usuario.");
+        var snackbar = SnackBar(
+          content: Text(
+            "Inicio de sesión cancelado.",
+            style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
+          ),
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 50, left: 20, right: 20),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
         return null;
       }
 
       final GoogleSignInAuthentication? googleAuth =
           await googleUser.authentication;
+
+      // Verificamos el dominio antes de proceso de autenticacion
+      if (!googleUser.email.endsWith('@itcelaya.edu.mx')) {
+        print('Inicio de sesión fallido. No es correo institucional');
+        var snackbar = SnackBar(
+          content: Text(
+            "Inicio de sesión fallido.\nUtiliza el correo institucional del TECNM en Celaya",
+            style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
+          ),
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 50, left: 20, right: 20),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        await GoogleSignIn().signOut();
+        return null;
+      }
+
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
