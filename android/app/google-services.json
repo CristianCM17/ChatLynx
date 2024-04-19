@@ -12,7 +12,28 @@
           "package_name": "com.example.chatlynx"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "843525052315-emd5s56a5jpcdon7q03ld9qbido61iav.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatlynx",
+            "certificate_hash": "12a2b948bb586fa5454742c06c02403482d6339c"
+          }
+        },
+        {
+          "client_id": "843525052315-qkl1ojlsh5dfma8sg8hs8l7qtg3gaje2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatlynx",
+            "certificate_hash": "21fcba36e8a17aff8ae6bed0667fd2ea18ff6718"
+          }
+        },
+        {
+          "client_id": "843525052315-gih1i2ut05v5uuceoed5918l84ur36qc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDi4PKYKwpSLtfrpV5nPgTd_p0fs_VDPu0"
@@ -20,7 +41,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "843525052315-gih1i2ut05v5uuceoed5918l84ur36qc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
