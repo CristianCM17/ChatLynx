@@ -1,4 +1,6 @@
+import 'package:chatlynx/services/google_auth_firebase.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,6 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
 
   static const List<Widget> _widgetOptions = <Widget>[
     Text(
@@ -29,6 +32,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    var googleListInfo =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return Scaffold(
       body: Stack(
         children: [
@@ -72,17 +77,26 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.white.withOpacity(0.2),
                 ),
                 child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.search,
-                    size: 32,
-                  ),
-                ),
+                    icon: Icon(
+                      Icons.search,
+                      size: 32,
+                    ),
+                    onPressed: () {}),
               ),
-              actions: const [
-                CircleAvatar(
-                  backgroundImage: AssetImage("assets/g_logo.png"),
-                  radius: 20,
+              actions: [
+                InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () {
+                    authGoogle.loginWithGoogle().then((userInfo) {
+                      Navigator.pushNamed(context, "/infoUser",
+                          arguments: userInfo);
+                    });
+                  },
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundImage:
+                        NetworkImage("${googleListInfo["photoURL"]}"),
+                  ),
                 ),
                 SizedBox(width: 20),
               ],

@@ -1,4 +1,5 @@
 import 'package:chatlynx/screens/home_screen.dart';
+import 'package:chatlynx/screens/info_user.screen.dart';
 import 'package:chatlynx/screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       routes: {
         "/welcome": (BuildContext context) => const WelcomeScreen(),
         "/home": (BuildContext context) => const HomePage(),
+        "/infoUser": (BuildContext context) => const InfoUser(),
       },
     );
   }
