@@ -21,6 +21,10 @@ class GoogleAuthFirebase {
     return _userCredential?.user?.photoURL;
   }
 
+  String? getUid() {
+    return _userCredential?.user?.uid;
+  }
+
   // LOGIN
   Future<Map<String, dynamic>?> loginWithGoogle(BuildContext context) async {
     try {
@@ -104,6 +108,7 @@ class GoogleAuthFirebase {
   // Obtener información del usuario
   Map<String, dynamic> _getUserInfo() {
     return {
+      'uid': getUid() ?? '',
       'nombre': getUserDisplayName() ?? 'Desconocido',
       'email': getUserEmail() ?? 'Desconocido',
       'photoURL': getUserPhotoURL() ?? '',
