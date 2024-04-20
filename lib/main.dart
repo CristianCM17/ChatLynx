@@ -1,4 +1,6 @@
+import 'package:chatlynx/screens/conversation_screen.dart';
 import 'package:chatlynx/screens/home_screen.dart';
+import 'package:chatlynx/screens/image_view_screen.dart';
 import 'package:chatlynx/screens/info_user.screen.dart';
 import 'package:chatlynx/screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
