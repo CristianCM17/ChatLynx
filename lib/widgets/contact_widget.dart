@@ -1,3 +1,4 @@
+import 'package:chatlynx/screens/image_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -16,16 +17,29 @@ class ContactWidget extends StatelessWidget {
               Positioned(
                 left: 0,
                 top: 0,
-                child: Container(
-                  width: 52,
-                  height: 52,
-                  decoration: ShapeDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage("https://via.placeholder.com/52x52"),
-                      fit: BoxFit.cover,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(31),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ImageViewScreen(
+                          imageURL: "https://via.placeholder.com/52x52",
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 52,
+                    height: 52,
+                    decoration: ShapeDecoration(
+                      image: DecorationImage(
+                        image:
+                            NetworkImage("https://via.placeholder.com/52x52"),
+                        fit: BoxFit.cover,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(31),
+                      ),
                     ),
                   ),
                 ),

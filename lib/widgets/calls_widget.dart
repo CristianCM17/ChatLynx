@@ -1,3 +1,4 @@
+import 'package:chatlynx/screens/image_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,16 +22,29 @@ class _CallsWidgetState extends State<CallsWidget> {
               Positioned(
                 left: 0,
                 top: 0,
-                child: Container(
-                  width: 52,
-                  height: 52,
-                  decoration: ShapeDecoration(
-                    image: const DecorationImage(
-                      image: NetworkImage("https://via.placeholder.com/52x52"),
-                      fit: BoxFit.cover,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(31),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ImageViewScreen(
+                          imageURL: "https://via.placeholder.com/52x52",
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 52,
+                    height: 52,
+                    decoration: ShapeDecoration(
+                      image: const DecorationImage(
+                        image:
+                            NetworkImage("https://via.placeholder.com/52x52"),
+                        fit: BoxFit.cover,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(31),
+                      ),
                     ),
                   ),
                 ),
@@ -109,16 +123,29 @@ class _CallsWidgetState extends State<CallsWidget> {
               Positioned(
                 left: 0,
                 top: 0,
-                child: Container(
-                  width: 52,
-                  height: 52,
-                  decoration: ShapeDecoration(
-                    image: const DecorationImage(
-                      image: NetworkImage("https://via.placeholder.com/52x52"),
-                      fit: BoxFit.cover,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(31),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ImageViewScreen(
+                          imageURL: "https://via.placeholder.com/52x52",
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 52,
+                    height: 52,
+                    decoration: ShapeDecoration(
+                      image: const DecorationImage(
+                        image:
+                            NetworkImage("https://via.placeholder.com/52x52"),
+                        fit: BoxFit.cover,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(31),
+                      ),
                     ),
                   ),
                 ),
@@ -127,7 +154,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                 alignment: Alignment.topRight,
                 child: InkWell(
                   onTap: () {
-                    print("Llamada saliente");
+                    print("Llamando");
                   },
                   child: const Icon(
                     Icons.video_call_rounded,
