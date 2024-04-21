@@ -33,42 +33,101 @@ class _AddContactScreenState extends State<AddContactScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Agregar contacto',
-          style: GoogleFonts.poppins(),
-        ),
-        toolbarHeight: 70,
-        backgroundColor: Colors.black.withOpacity(0.90),
-        foregroundColor: Colors.white,
-      ),
-      body: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration:
-                    const InputDecoration(labelText: 'Correo electrónico'),
-                validator: _validateEmail,
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: const DecorationImage(
+                image: AssetImage("assets/fondo_ws.png"),
+                fit: BoxFit.cover,
               ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    String email = _emailController.text;
-                    print('Correo electrónico válido: $email');
-                    Navigator.pop(context);
-                  }
-                },
-                child: Text('Agregar contacto'),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.black, Colors.green.shade900],
               ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            top: 10,
+            left: 0,
+            right: 0,
+            child: AppBar(
+              leadingWidth: 75,
+              toolbarHeight: 70,
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top +
+                kToolbarHeight +
+                60, // Posición desde la parte superior
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 20),
+                      child: Center(
+                          child: Text(
+                        "Agrega un nuevo contacto",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                            color: Colors.white, fontSize: 28),
+                      )),
+                    ),
+                    Center(
+                        child: Text(
+                      "Conéctate con amigos y profesores del TECNM en Celaya con ChatLynx",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                          color: Colors.white.withOpacity(0.6), fontSize: 18),
+                    )),
+                    const SizedBox(
+                      height: 60,
+                    ),
+                    TextFormField(
+                      style: GoogleFonts.poppins(color: Colors.white),
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                          errorStyle:
+                              GoogleFonts.poppins(color: Colors.red.shade300),
+                          labelStyle: GoogleFonts.poppins(color: Colors.white),
+                          labelText: 'Correo electrónico a añadir'),
+                      validator: _validateEmail,
+                    ),
+                    const SizedBox(height: 60),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          String email = _emailController.text;
+                          print('Correo electrónico válido: $email');
+                          Navigator.pop(context);
+                        }
+                      },
+                      style: const ButtonStyle(
+                        padding: MaterialStatePropertyAll(EdgeInsets.all(15)),
+                      ),
+                      child: Text(
+                        'Agregar contacto',
+                        style: GoogleFonts.poppins(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
