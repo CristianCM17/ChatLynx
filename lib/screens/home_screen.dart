@@ -18,7 +18,8 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
   final UsersFirestore usersFirestore = UsersFirestore();
-  late List<Widget> _widgetOptions; // Definir la lista sin inicializarla directamente
+  late List<Widget>
+      _widgetOptions; // Definir la lista sin inicializarla directamente
 
   List<Widget> _buildWidgetOptions() {
     return <Widget>[
@@ -61,8 +62,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    
-    _widgetOptions = _buildWidgetOptions(); // Inicializar la lista en el initState
+
+    _widgetOptions =
+        _buildWidgetOptions(); // Inicializar la lista en el initState
   }
 
   Widget buildConversationStreamBuilder() {
@@ -73,7 +75,7 @@ class _HomePageState extends State<HomePage> {
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-                 return ContactWidget(usersData: snapshot.data!.docs[index]);
+              return ContactWidget(usersData: snapshot.data!.docs[index]);
             },
           );
         } else {
@@ -140,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                       size: 32,
                     ),
                     onPressed: () {
-                       Navigator.pushNamed(context, "/searchConversation");
+                      Navigator.pushNamed(context, "/searchConversation");
                     }),
               ),
               actions: [
@@ -217,7 +219,9 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: _selectedIndex == 2
           ? FloatingActionButton(
               backgroundColor: Colors.green[500],
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, "/addContact");
+              },
               child: Icon(
                 Icons.person_add,
                 size: 32,

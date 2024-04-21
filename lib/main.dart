@@ -1,3 +1,4 @@
+import 'package:chatlynx/screens/add_contact_screen.dart';
 import 'package:chatlynx/screens/conversation_screen.dart';
 import 'package:chatlynx/screens/home_screen.dart';
 import 'package:chatlynx/screens/image_view_screen.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         "/infoUser": (BuildContext context) => const InfoUser(),
         "/searchConversation": (BuildContext context) =>
             const SearchConversation(),
+        "/addContact": (BuildContext context) => const AddContactScreen(),
       },
     );
   }
