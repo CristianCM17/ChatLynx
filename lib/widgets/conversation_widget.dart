@@ -38,6 +38,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const ImageViewScreen(
+                            nombre: "",
                             imageURL: "https://via.placeholder.com/52x52",
                           ),
                         ),

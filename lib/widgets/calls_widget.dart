@@ -1,10 +1,12 @@
 import 'package:chatlynx/screens/image_view_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CallsWidget extends StatefulWidget {
-  const CallsWidget({Key? key}) : super(key: key);
+  final QueryDocumentSnapshot? usersData;
+  const CallsWidget({Key? key, this.usersData}) : super(key: key);
 
   @override
   State<CallsWidget> createState() => _CallsWidgetState();
@@ -29,6 +31,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const ImageViewScreen(
+                          nombre: "",
                           imageURL: "https://via.placeholder.com/52x52",
                         ),
                       ),
@@ -130,6 +133,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const ImageViewScreen(
+                          nombre: "",
                           imageURL: "https://via.placeholder.com/52x52",
                         ),
                       ),

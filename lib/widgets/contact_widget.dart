@@ -7,8 +7,6 @@ class ContactWidget extends StatefulWidget {
   final QueryDocumentSnapshot? usersData;
   const ContactWidget({super.key, this.usersData});
 
-  
-
   @override
   State<ContactWidget> createState() => _ContactWidgetState();
 }
@@ -32,7 +30,8 @@ class _ContactWidgetState extends State<ContactWidget> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>  ImageViewScreen(
+                        builder: (context) => ImageViewScreen(
+                          nombre: widget.usersData!.get("nombre"),
                           imageURL: widget.usersData!.get("photoURL"),
                         ),
                       ),
@@ -43,8 +42,7 @@ class _ContactWidgetState extends State<ContactWidget> {
                     height: 52,
                     decoration: ShapeDecoration(
                       image: DecorationImage(
-                        image:
-                            NetworkImage(widget.usersData!.get("photoURL")),
+                        image: NetworkImage(widget.usersData!.get("photoURL")),
                         fit: BoxFit.cover,
                       ),
                       shape: RoundedRectangleBorder(
