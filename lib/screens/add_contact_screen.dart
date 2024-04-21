@@ -1,3 +1,4 @@
+import 'package:chatlynx/services/users_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,6 +12,7 @@ class AddContactScreen extends StatefulWidget {
 class _AddContactScreenState extends State<AddContactScreen> {
   final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final UsersFirestore usersFirestore = UsersFirestore();
 
   @override
   void dispose() {
@@ -45,6 +47,50 @@ class _AddContactScreenState extends State<AddContactScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [Colors.black, Colors.green.shade900],
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {
+                  usersFirestore.consultar().first.then((snapshot) {
+                    bool uidExists = snapshot.docs
+                        .any((doc) => doc['email'] == _emailController.text);
+                    if (_formKey.currentState!.validate()) {
+                      if (!uidExists) {
+                      var snackbar = SnackBar(
+                        content: Text(
+                          "El email no esta registrado en Chatlynx",
+                          style: GoogleFonts.poppins(
+                              fontSize: 14, color: Colors.white),
+                        ),
+                        duration: const Duration(seconds: 3),
+                        backgroundColor: Colors.red,
+                        behavior: SnackBarBehavior.floating,
+                        margin: const EdgeInsets.only(
+                            bottom: 50, left: 20, right: 20),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                      print("El email no esta registrado en Chatlynx");
+                    } else {
+                      var snackbar = SnackBar(
+                        content: Text(
+                          "Usuario agregado a contactos",
+                          style: GoogleFonts.poppins(
+                              fontSize: 14, color: Colors.white),
+                        ),
+                        duration: const Duration(seconds: 3),
+                        backgroundColor: Colors.green.shade300,
+                        behavior: SnackBarBehavior.floating,
+                        margin: const EdgeInsets.only(
+                            bottom: 50, left: 20, right: 20),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                      Navigator.pop(context);
+                      print("Usuario agregado a contactos");
+                    }
+                    }
+                    
+                  });
+                },
+                child: Text('Agregar contacto'),
               ),
             ),
           ),
