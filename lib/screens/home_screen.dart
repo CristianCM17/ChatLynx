@@ -1,10 +1,10 @@
 import 'package:chatlynx/services/google_auth_firebase.dart';
+import 'package:chatlynx/services/users_firestore.dart';
 import 'package:chatlynx/widgets/calls_widget.dart';
 import 'package:chatlynx/widgets/contact_widget.dart';
 import 'package:chatlynx/widgets/conversation_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,59 +17,75 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
+  final UsersFirestore usersFirestore = UsersFirestore();
+  late List<Widget> _widgetOptions; // Definir la lista sin inicializarla directamente
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    //MENSAJES
-    SingleChildScrollView(
-      child: Column(
-        children: [
-          ConversationWidget(),
-          ConversationWidget(),
-          ConversationWidget(),
-          ConversationWidget(),
-          ConversationWidget(),
-          ConversationWidget(),
-          ConversationWidget(),
-          ConversationWidget(),
-          ConversationWidget(),
-          ConversationWidget(),
-          ConversationWidget(),
-        ],
+  List<Widget> _buildWidgetOptions() {
+    return <Widget>[
+      //MENSAJES
+      SingleChildScrollView(
+        child: Column(
+          children: [
+            ConversationWidget(),
+            ConversationWidget(),
+            ConversationWidget(),
+            ConversationWidget(),
+            ConversationWidget(),
+            ConversationWidget(),
+            ConversationWidget(),
+            ConversationWidget(),
+            ConversationWidget(),
+            ConversationWidget(),
+            ConversationWidget(),
+          ],
+        ),
       ),
-    ),
-    //VIDEOLLAMADAS
-    SingleChildScrollView(
-      child: Column(
-        children: [
-          CallsWidget(),
-          CallsWidget(),
-          CallsWidget(),
-          CallsWidget(),
-          CallsWidget(),
-          CallsWidget(),
-        ],
+      //VIDEOLLAMADAS
+      SingleChildScrollView(
+        child: Column(
+          children: [
+            CallsWidget(),
+            CallsWidget(),
+            CallsWidget(),
+            CallsWidget(),
+            CallsWidget(),
+            CallsWidget(),
+          ],
+        ),
       ),
-    ),
-    //CONTACTOS
-    SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ContactWidget(),
-          ContactWidget(),
-          ContactWidget(),
-          ContactWidget(),
-          ContactWidget(),
-          ContactWidget(),
-          ContactWidget(),
-          ContactWidget(),
-          ContactWidget(),
-          ContactWidget(),
-          ContactWidget()
-        ],
-      ),
-    ),
-  ];
+      //CONTACTOS
+      buildConversationStreamBuilder(), // Movido aquí
+    ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    
+    _widgetOptions = _buildWidgetOptions(); // Inicializar la lista en el initState
+  }
+
+  Widget buildConversationStreamBuilder() {
+    return StreamBuilder(
+      stream: usersFirestore.consultar(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+                 return ContactWidget(usersData: snapshot.data!.docs[index]);
+            },
+          );
+        } else {
+          if (snapshot.hasError) {
+            return const Text("Error al obtener datos");
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                       size: 32,
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, "/searchConversation");
+                       Navigator.pushNamed(context, "/searchConversation");
                     }),
               ),
               actions: [
