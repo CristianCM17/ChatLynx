@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "843525052315-lt1v0vhs7ini5bvme65k57ueb3m3pl19.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatlynx",
+            "certificate_hash": "4d782af65827dbc12f9a808f41f0ecab23cd89ba"
+          }
+        },
+        {
           "client_id": "843525052315-qkl1ojlsh5dfma8sg8hs8l7qtg3gaje2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
