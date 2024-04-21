@@ -1,5 +1,6 @@
 import 'package:chatlynx/services/google_auth_firebase.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class InfoUser extends StatelessWidget {
@@ -77,15 +78,49 @@ class InfoUser extends StatelessWidget {
                             children: [
                               const SizedBox(height: 30),
                               Text(
-                                "Nombre: ${googleListInfo["nombre"]}",
+                                "Nombre",
                                 style: GoogleFonts.poppins(
-                                    fontSize: 18, color: Colors.white),
+                                  fontSize: 22,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                "${googleListInfo["nombre"]}",
+                                style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontWeight: FontWeight.w300),
                               ),
                               const SizedBox(height: 15),
                               Text(
-                                "Correo Electrónico: ${googleListInfo["email"]}",
+                                "Correo Electrónico",
                                 style: GoogleFonts.poppins(
-                                    fontSize: 18, color: Colors.white),
+                                    fontSize: 22, color: Colors.white),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "${googleListInfo["email"]}",
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        color: Colors.white.withOpacity(0.8),
+                                        fontWeight: FontWeight.w300),
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Clipboard.setData(ClipboardData(
+                                            text:
+                                                "${googleListInfo["email"]}"));
+                                      },
+                                      child: const Icon(Icons.content_copy,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 35),
                               Center(
@@ -93,7 +128,7 @@ class InfoUser extends StatelessWidget {
                                   "Imagen",
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.poppins(
-                                      fontSize: 18, color: Colors.white),
+                                      fontSize: 22, color: Colors.white),
                                 ),
                               ),
                               const SizedBox(height: 10),
