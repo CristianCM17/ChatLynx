@@ -123,7 +123,9 @@ class _HomePageState extends State<HomePage> {
                       Icons.search,
                       size: 32,
                     ),
-                    onPressed: () {}),
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/searchConversation");
+                    }),
               ),
               actions: [
                 InkWell(
