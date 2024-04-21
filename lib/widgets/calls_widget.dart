@@ -13,6 +13,7 @@ class CallsWidget extends StatefulWidget {
 class _CallsWidgetState extends State<CallsWidget> {
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Column(
       children: [
         Container(
@@ -66,7 +67,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                 left: 64,
                 top: 9,
                 child: Container(
-                  width: 144,
+                  width: size.width,
                   height: 48,
                   child: Stack(
                     children: [
@@ -79,7 +80,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
-                            height: 0.05,
+                            height: 0.85,
                           ),
                         ),
                       ),
@@ -167,7 +168,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                 left: 64,
                 top: 9,
                 child: Container(
-                  width: 144,
+                  width: size.width,
                   height: 48,
                   child: Stack(
                     children: [
@@ -180,7 +181,7 @@ class _CallsWidgetState extends State<CallsWidget> {
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
-                            height: 0.05,
+                            height: 0.85,
                           ),
                         ),
                       ),

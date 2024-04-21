@@ -7,10 +7,11 @@ class ContactWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Column(
       children: [
         Container(
-          width: 170,
+          width: size.width,
           height: 52,
           child: Stack(
             children: [

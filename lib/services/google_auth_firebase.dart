@@ -37,7 +37,7 @@ class GoogleAuthFirebase {
             "Inicio de sesión cancelado.",
             style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
           ),
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 2),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.only(bottom: 50, left: 20, right: 20),

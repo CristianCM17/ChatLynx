@@ -14,6 +14,7 @@ class ConversationWidget extends StatefulWidget {
 class _ConversationWidgetState extends State<ConversationWidget> {
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -68,7 +69,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                       color: Color(0xFFE6D3B5),
                       fontSize: 12,
                       fontWeight: FontWeight.w300,
-                      height: 0.08,
+                      height: 2.5,
                     ),
                   ),
                 ),
@@ -76,8 +77,8 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                   left: 64,
                   top: 9,
                   child: Container(
-                    width: 144,
-                    height: 38,
+                    width: size.width,
+                    height: 48,
                     child: Stack(
                       children: [
                         Positioned(
@@ -89,7 +90,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                               color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
-                              height: 0.05,
+                              height: 0.85,
                             ),
                           ),
                         ),
@@ -102,7 +103,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                               color: Color(0xFFE6D3B5),
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
-                              height: 0.08,
+                              height: 1,
                             ),
                           ),
                         ),

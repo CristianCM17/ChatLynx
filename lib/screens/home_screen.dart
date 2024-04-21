@@ -164,14 +164,17 @@ class _HomePageState extends State<HomePage> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.message_outlined),
+              activeIcon: Icon(Icons.message_rounded),
               label: 'Mensajes',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.video_camera_front_outlined),
-              label: 'VideoLlamadas',
+              activeIcon: Icon(Icons.video_camera_front),
+              label: 'Videollamadas',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.contacts_outlined),
+              activeIcon: Icon(Icons.contacts),
               label: 'Contactos',
             ),
           ],
