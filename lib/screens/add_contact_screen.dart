@@ -65,17 +65,23 @@ class _AddContactScreenState extends State<AddContactScreen> {
           Positioned(
             top: MediaQuery.of(context).padding.top +
                 kToolbarHeight +
-                60, // Posición desde la parte superior
+                10, // Posición desde la parte superior
             left: 0,
             right: 0,
             bottom: 0,
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Container(
+                      child: Image.asset(
+                        "assets/tecelaya.png",
+                        height: 150,
+                      ),
+                    ),
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 20),
                       child: Center(
