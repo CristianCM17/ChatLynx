@@ -220,7 +220,7 @@ class _HomePageState extends State<HomePage> {
           ? FloatingActionButton(
               backgroundColor: Colors.green[500],
               onPressed: () {
-                Navigator.pushNamed(context, "/addContact");
+                Navigator.pushNamed(context, "/addContact",arguments: googleListInfo);
               },
               child: Icon(
                 Icons.person_add,

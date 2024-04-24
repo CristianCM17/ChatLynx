@@ -34,6 +34,8 @@ class _AddContactScreenState extends State<AddContactScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var googleData =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return Scaffold(
       body: Stack(
         children: [
@@ -114,7 +116,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                     ),
                     const SizedBox(height: 60),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed:  (){
                         usersFirestore.consultar().first.then((snapshot) {
                           bool uidExists = snapshot.docs.any(
                               (doc) => doc['email'] == _emailController.text);
@@ -136,7 +138,14 @@ class _AddContactScreenState extends State<AddContactScreen> {
                                   .showSnackBar(snackbar);
                               print("El email no esta registrado en Chatlynx");
                             } else {
-                              var snackbar = SnackBar(
+
+                              usersFirestore.encontrarUserIdPorUid(googleData["uid"]).then((value) async {
+                                var userData = await usersFirestore.encontrarUsuarioPorEmail(_emailController.text);
+                                if(value != null && userData!.docs.isNotEmpty) {
+                                   usersFirestore.crearSubcoleccionContactos(value, userData.docs.first.data())
+                                   .then((_) {
+                                    print("Usuario agregado a contactos");
+                                    var snackbar = SnackBar(
                                 content: Text(
                                   "Usuario agregado a contactos",
                                   style: GoogleFonts.poppins(
@@ -151,7 +160,12 @@ class _AddContactScreenState extends State<AddContactScreen> {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackbar);
                               Navigator.pop(context);
-                              print("Usuario agregado a contactos");
+                                   }
+                                   );
+                                }else{
+                                  print("No se pudo obtener el id con ese email ${googleData["email"]}");
+                                }
+                              });
                             }
                           }
                         });
