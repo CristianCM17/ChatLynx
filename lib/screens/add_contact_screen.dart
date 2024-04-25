@@ -71,105 +71,113 @@ class _AddContactScreenState extends State<AddContactScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      child: Image.asset(
-                        "assets/tecelaya.png",
-                        height: 150,
+            child: SingleChildScrollView(
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        child: Image.asset(
+                          "assets/tecelaya.png",
+                          height: 150,
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 20),
-                      child: Center(
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 20),
+                        child: Center(
+                            child: Text(
+                          "Agrega un nuevo contacto",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                              color: Colors.white, fontSize: 28),
+                        )),
+                      ),
+                      Center(
                           child: Text(
-                        "Agrega un nuevo contacto",
+                        "Conéctate con amigos y profesores del TECNM en Celaya con ChatLynx",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
-                            color: Colors.white, fontSize: 28),
+                            color: Colors.white.withOpacity(0.6), fontSize: 18),
                       )),
-                    ),
-                    Center(
-                        child: Text(
-                      "Conéctate con amigos y profesores del TECNM en Celaya con ChatLynx",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                          color: Colors.white.withOpacity(0.6), fontSize: 18),
-                    )),
-                    const SizedBox(
-                      height: 60,
-                    ),
-                    TextFormField(
-                      style: GoogleFonts.poppins(color: Colors.white),
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                          errorStyle:
-                              GoogleFonts.poppins(color: Colors.red.shade300),
-                          labelStyle: GoogleFonts.poppins(color: Colors.white),
-                          labelText: 'Correo electrónico a añadir'),
-                      validator: _validateEmail,
-                    ),
-                    const SizedBox(height: 60),
-                    ElevatedButton(
-                      onPressed: () {
-                        usersFirestore.consultar().first.then((snapshot) {
-                          bool uidExists = snapshot.docs.any(
-                              (doc) => doc['email'] == _emailController.text);
-                          if (_formKey.currentState!.validate()) {
-                            if (!uidExists) {
-                              var snackbar = SnackBar(
-                                content: Text(
-                                  "El email no esta registrado en Chatlynx",
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 14, color: Colors.white),
-                                ),
-                                duration: const Duration(seconds: 3),
-                                backgroundColor: Colors.red,
-                                behavior: SnackBarBehavior.floating,
-                                margin: const EdgeInsets.only(
-                                    bottom: 50, left: 20, right: 20),
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackbar);
-                              print("El email no esta registrado en Chatlynx");
-                            } else {
-                              usersFirestore
-                                  .encontrarUserIdPorUid(googleData["uid"])
-                                  .then((value) async {
-                                var userData = await usersFirestore
-                                    .encontrarUsuarioPorEmail(
-                                        _emailController.text);
-                                var existeCorreo = await usersFirestore.existeCorreoEnContactos(value, _emailController.text);
-                                if (value != null &&
-                                    userData!.docs.isNotEmpty && !existeCorreo) {
-                                  usersFirestore
-                                      .crearSubcoleccionContactos(
-                                          value, userData.docs.first.data())
-                                      .then((_) {
-                                    print("Usuario agregado a contactos");
+                      const SizedBox(
+                        height: 60,
+                      ),
+                      TextFormField(
+                        style: GoogleFonts.poppins(color: Colors.white),
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                            errorStyle:
+                                GoogleFonts.poppins(color: Colors.red.shade300),
+                            labelStyle:
+                                GoogleFonts.poppins(color: Colors.white),
+                            labelText: 'Correo electrónico a añadir'),
+                        validator: _validateEmail,
+                      ),
+                      const SizedBox(height: 60),
+                      ElevatedButton(
+                        onPressed: () {
+                          usersFirestore.consultar().first.then((snapshot) {
+                            bool uidExists = snapshot.docs.any(
+                                (doc) => doc['email'] == _emailController.text);
+                            if (_formKey.currentState!.validate()) {
+                              FocusScope.of(context).unfocus();
+                              if (!uidExists) {
+                                var snackbar = SnackBar(
+                                  content: Text(
+                                    "El email no esta registrado en Chatlynx",
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 14, color: Colors.white),
+                                  ),
+                                  duration: const Duration(seconds: 3),
+                                  backgroundColor: Colors.red,
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: const EdgeInsets.only(
+                                      bottom: 50, left: 20, right: 20),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackbar);
+                                print(
+                                    "El email no esta registrado en Chatlynx");
+                              } else {
+                                usersFirestore
+                                    .encontrarUserIdPorUid(googleData["uid"])
+                                    .then((value) async {
+                                  var userData = await usersFirestore
+                                      .encontrarUsuarioPorEmail(
+                                          _emailController.text);
+                                  var existeCorreo = await usersFirestore
+                                      .existeCorreoEnContactos(
+                                          value, _emailController.text);
+                                  if (value != null &&
+                                      userData!.docs.isNotEmpty &&
+                                      !existeCorreo) {
+                                    usersFirestore
+                                        .crearSubcoleccionContactos(
+                                            value, userData.docs.first.data())
+                                        .then((_) {
+                                      print("Usuario agregado a contactos");
+                                      var snackbar = SnackBar(
+                                        content: Text(
+                                          "Usuario agregado a contactos",
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: Colors.white),
+                                        ),
+                                        duration: const Duration(seconds: 3),
+                                        backgroundColor: Colors.green.shade300,
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: const EdgeInsets.only(
+                                            bottom: 50, left: 20, right: 20),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackbar);
+                                      Navigator.pop(context);
+                                    });
+                                  } else {
                                     var snackbar = SnackBar(
-                                      content: Text(
-                                        "Usuario agregado a contactos",
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 14, color: Colors.white),
-                                      ),
-                                      duration: const Duration(seconds: 3),
-                                      backgroundColor: Colors.green.shade300,
-                                      behavior: SnackBarBehavior.floating,
-                                      margin: const EdgeInsets.only(
-                                          bottom: 50, left: 20, right: 20),
-                                    );
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackbar);
-                                    Navigator.pop(context);
-                                  });
-                                } else {
-                                  var snackbar = SnackBar(
                                       content: Text(
                                         "Ese correo ya lo tienes en tus contactos ${googleData["email"]}",
                                         style: GoogleFonts.poppins(
@@ -183,24 +191,25 @@ class _AddContactScreenState extends State<AddContactScreen> {
                                     );
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(snackbar);
-                                  print(
-                                      "Ese correo ya lo tienes en tus contactos ${googleData["email"]}");
-                                }
-                              });
+                                    print(
+                                        "Ese correo ya lo tienes en tus contactos ${googleData["email"]}");
+                                  }
+                                });
+                              }
                             }
-                          }
-                        });
-                      },
-                      style: const ButtonStyle(
-                        padding: MaterialStatePropertyAll(EdgeInsets.all(15)),
+                          });
+                        },
+                        style: const ButtonStyle(
+                          padding: MaterialStatePropertyAll(EdgeInsets.all(15)),
+                        ),
+                        child: Text(
+                          'Agregar contacto',
+                          style: GoogleFonts.poppins(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      child: Text(
-                        'Agregar contacto',
-                        style: GoogleFonts.poppins(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
