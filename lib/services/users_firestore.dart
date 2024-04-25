@@ -76,4 +76,9 @@ Future<bool> existeCorreoEnContactos(String? userId, String email) async {
   }
 }
 
+Stream<QuerySnapshot> consultarContactos(String userId) {
+  CollectionReference contactosCollection = usersCollection.doc(userId).collection('contactos');
+    return contactosCollection.snapshots();
+  }
+
 }
