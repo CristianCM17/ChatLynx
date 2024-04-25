@@ -60,4 +60,20 @@ class UsersFirestore {
     return null;
   }
 }
+Future<bool> existeCorreoEnContactos(String? userId, String email) async {
+  try {
+    // Obtener referencia a la subcolección "contactos" dentro del documento del usuario
+    CollectionReference contactosCollection = usersCollection.doc(userId).collection('contactos');
+
+    // Realizar una consulta para verificar si existe un documento con el correo dado
+    QuerySnapshot snapshot = await contactosCollection.where('email', isEqualTo: email).get();
+
+    // Si la consulta devuelve al menos un documento, el correo existe en la subcolección
+    return snapshot.docs.isNotEmpty;
+  } catch (error) {
+    print('Error al verificar si el correo existe en contactos: $error');
+    return false;
+  }
+}
+
 }

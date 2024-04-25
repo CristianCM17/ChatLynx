@@ -116,7 +116,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                     ),
                     const SizedBox(height: 60),
                     ElevatedButton(
-                      onPressed:  (){
+                      onPressed: () {
                         usersFirestore.consultar().first.then((snapshot) {
                           bool uidExists = snapshot.docs.any(
                               (doc) => doc['email'] == _emailController.text);
@@ -138,32 +138,53 @@ class _AddContactScreenState extends State<AddContactScreen> {
                                   .showSnackBar(snackbar);
                               print("El email no esta registrado en Chatlynx");
                             } else {
-
-                              usersFirestore.encontrarUserIdPorUid(googleData["uid"]).then((value) async {
-                                var userData = await usersFirestore.encontrarUsuarioPorEmail(_emailController.text);
-                                if(value != null && userData!.docs.isNotEmpty) {
-                                   usersFirestore.crearSubcoleccionContactos(value, userData.docs.first.data())
-                                   .then((_) {
+                              usersFirestore
+                                  .encontrarUserIdPorUid(googleData["uid"])
+                                  .then((value) async {
+                                var userData = await usersFirestore
+                                    .encontrarUsuarioPorEmail(
+                                        _emailController.text);
+                                var existeCorreo = await usersFirestore.existeCorreoEnContactos(value, _emailController.text);
+                                if (value != null &&
+                                    userData!.docs.isNotEmpty && !existeCorreo) {
+                                  usersFirestore
+                                      .crearSubcoleccionContactos(
+                                          value, userData.docs.first.data())
+                                      .then((_) {
                                     print("Usuario agregado a contactos");
                                     var snackbar = SnackBar(
-                                content: Text(
-                                  "Usuario agregado a contactos",
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 14, color: Colors.white),
-                                ),
-                                duration: const Duration(seconds: 3),
-                                backgroundColor: Colors.green.shade300,
-                                behavior: SnackBarBehavior.floating,
-                                margin: const EdgeInsets.only(
-                                    bottom: 50, left: 20, right: 20),
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackbar);
-                              Navigator.pop(context);
-                                   }
-                                   );
-                                }else{
-                                  print("No se pudo obtener el id con ese email ${googleData["email"]}");
+                                      content: Text(
+                                        "Usuario agregado a contactos",
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 14, color: Colors.white),
+                                      ),
+                                      duration: const Duration(seconds: 3),
+                                      backgroundColor: Colors.green.shade300,
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: const EdgeInsets.only(
+                                          bottom: 50, left: 20, right: 20),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackbar);
+                                    Navigator.pop(context);
+                                  });
+                                } else {
+                                  var snackbar = SnackBar(
+                                      content: Text(
+                                        "Ese correo ya lo tienes en tus contactos ${googleData["email"]}",
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 14, color: Colors.white),
+                                      ),
+                                      duration: const Duration(seconds: 3),
+                                      backgroundColor: Colors.red,
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: const EdgeInsets.only(
+                                          bottom: 50, left: 20, right: 20),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackbar);
+                                  print(
+                                      "Ese correo ya lo tienes en tus contactos ${googleData["email"]}");
                                 }
                               });
                             }
