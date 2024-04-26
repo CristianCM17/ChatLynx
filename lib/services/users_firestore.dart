@@ -130,4 +130,30 @@ class UsersFirestore {
       print('Error al crear subcolección de mensajes: $error');
     }
   }
+
+  Future<List<Map<String, dynamic>>> consultarMensajesEntreUsuarios(
+      String userId, String contactoId) async {
+    try {
+      DocumentReference userDocRef = usersCollection.doc(userId);
+
+      CollectionReference mensajesCollection = userDocRef
+          .collection('mensajes')
+          .doc(contactoId)
+          .collection('listamensajes');
+
+      // Consultar msj
+      QuerySnapshot snapshot = await mensajesCollection.get();
+
+      // Convertimos los documentos de mensajes a una lista de mapas
+      List<Map<String, dynamic>> mensajes = [];
+      snapshot.docs.forEach((doc) {
+        mensajes.add(doc.data() as Map<String, dynamic>);
+      });
+
+      return mensajes;
+    } catch (error) {
+      print('Error al consultar mensajes entre usuarios: $error');
+      throw Exception('Error al consultar mensajes entre usuarios');
+    }
+  }
 }

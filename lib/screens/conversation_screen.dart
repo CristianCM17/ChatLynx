@@ -1,11 +1,8 @@
 import 'package:chatlynx/screens/image_view_screen.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:photo_view/photo_view.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String imageURL;
@@ -24,6 +21,7 @@ class ConversationScreen extends StatefulWidget {
 class _ConversationScreenState extends State<ConversationScreen> {
   final TextEditingController _messageController = TextEditingController();
   final UsersFirestore usersFirestore = UsersFirestore();
+  String userId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void dispose() {
@@ -98,11 +96,42 @@ class _ConversationScreenState extends State<ConversationScreen> {
         child: Column(
           children: [
             Expanded(
-              child: Center(
-                child: Text(
-                  'Detalle de la conversación',
-                  style: GoogleFonts.poppins(color: Colors.white),
-                ),
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: usersFirestore.consultarMensajesEntreUsuarios(
+                    userId, widget.uid),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    if (snapshot.hasError) {
+                      return Text('Error al cargar los mensajes');
+                    } else {
+                      if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            Map<String, dynamic> mensaje =
+                                snapshot.data![index];
+                            return ListTile(
+                              title: Text(mensaje['contenido']),
+                              subtitle: Text(mensaje['fecha']),
+                            );
+                          },
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            'No hay mensajes aún',
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      }
+                    }
+                  }
+                },
               ),
             ),
 
