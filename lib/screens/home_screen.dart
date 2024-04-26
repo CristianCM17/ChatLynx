@@ -1,4 +1,3 @@
-
 import 'package:chatlynx/services/google_auth_firebase.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:chatlynx/widgets/calls_widget.dart';
@@ -60,41 +59,52 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
-  
-
   Widget buildConversationStreamBuilder(uid) {
-  return FutureBuilder(
-    future: usersFirestore.encontrarUserIdPorUid(uid),
-    builder: (BuildContext context, AsyncSnapshot userInfoSnapshot) {
-      if (userInfoSnapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
-      } else if (userInfoSnapshot.hasError) {
-        return Text("Error al obtener información del usuario");
-      } else {
-        var userId = userInfoSnapshot.data;
-        return StreamBuilder(
-          stream: usersFirestore.consultarContactos(userId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Text("Error al obtener datos");
-            } else if (snapshot.hasData) {
-              return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) {
-                  return ContactWidget(usersData: snapshot.data!.docs[index]);
-                },
-              );
-            } else {
-              return Text("No hay datos disponibles");
-            }
-          },
-        );
-      }
-    },
-  );
-}
+    return FutureBuilder(
+      future: usersFirestore.encontrarUserIdPorUid(uid),
+      builder: (BuildContext context, AsyncSnapshot userInfoSnapshot) {
+        if (userInfoSnapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: const CircularProgressIndicator());
+        } else if (userInfoSnapshot.hasError) {
+          return const Text("Error al obtener información del usuario");
+        } else {
+          var userId = userInfoSnapshot.data;
+          return StreamBuilder(
+            stream: usersFirestore.consultarContactos(userId),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const Text("Error al obtener datos");
+              } else if (snapshot.hasData) {
+                if (snapshot.data!.docs.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "No hay contactos agregados",
+                      style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      return ContactWidget(
+                          usersData: snapshot.data!.docs[index]);
+                    },
+                  );
+                }
+              } else {
+                return const Text("No hay datos disponibles");
+              }
+            },
+          );
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +190,8 @@ class _HomePageState extends State<HomePage> {
             bottom: 0, // Ocupará todo el espacio disponible debajo del AppBar
             child: Container(
               margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-              child: _buildWidgetOptions(googleListInfo["uid"]).elementAt(_selectedIndex),
+              child: _buildWidgetOptions(googleListInfo["uid"])
+                  .elementAt(_selectedIndex),
             ),
           )
         ],
@@ -227,7 +238,8 @@ class _HomePageState extends State<HomePage> {
           ? FloatingActionButton(
               backgroundColor: Colors.green[500],
               onPressed: () {
-                Navigator.pushNamed(context, "/addContact",arguments: googleListInfo);
+                Navigator.pushNamed(context, "/addContact",
+                    arguments: googleListInfo);
               },
               child: Icon(
                 Icons.person_add,

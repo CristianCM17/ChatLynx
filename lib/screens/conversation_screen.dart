@@ -1,11 +1,15 @@
 import 'package:chatlynx/screens/image_view_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ConversationScreen extends StatefulWidget {
-  const ConversationScreen({super.key});
+  final String imageURL;
+  final String nombre;
+  const ConversationScreen(
+      {super.key, required this.imageURL, required this.nombre});
 
   @override
   State<ConversationScreen> createState() => _ConversationScreenState();
@@ -35,26 +39,28 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ImageViewScreen(
-                      nombre: "",
-                      imageURL: "https://via.placeholder.com/52x52",
+                    builder: (context) => ImageViewScreen(
+                      nombre: widget.nombre,
+                      imageURL: widget.imageURL,
                     ),
                   ),
                 );
               },
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 20,
-                backgroundImage:
-                    NetworkImage("https://via.placeholder.com/52x52"),
+                backgroundImage: NetworkImage(widget.imageURL),
               ),
             ),
             const SizedBox(
               width: 15,
             ),
-            Text(
-              'Nombre',
-              style: GoogleFonts.poppins(
-                  fontSize: 24, fontWeight: FontWeight.w300),
+            Expanded(
+              child: Text(
+                widget.nombre,
+                overflow: TextOverflow.fade,
+                style: GoogleFonts.poppins(
+                    fontSize: 14, fontWeight: FontWeight.w300),
+              ),
             ),
           ],
         ),

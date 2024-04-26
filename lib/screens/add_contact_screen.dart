@@ -164,7 +164,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                                           "Usuario agregado a contactos",
                                           style: GoogleFonts.poppins(
                                               fontSize: 14,
-                                              color: Colors.white),
+                                              color: Colors.black),
                                         ),
                                         duration: const Duration(seconds: 3),
                                         backgroundColor: Colors.green.shade300,

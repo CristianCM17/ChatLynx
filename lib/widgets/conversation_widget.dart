@@ -19,7 +19,11 @@ class _ConversationWidgetState extends State<ConversationWidget> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ConversationScreen()),
+          MaterialPageRoute(
+              builder: (context) => const ConversationScreen(
+                    nombre: "",
+                    imageURL: "https://via.placeholder.com/52x52",
+                  )),
         );
       },
       child: Column(
