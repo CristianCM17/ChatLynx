@@ -1,10 +1,10 @@
+import 'package:chatlynx/services/google_auth_firebase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UsersFirestore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String uidUser = FirebaseAuth.instance.currentUser!.uid;
-  String? nameUser = FirebaseAuth.instance.currentUser!.displayName;
+  final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
 
   // Obtener referencia a la colección principal de usuarios
   CollectionReference get usersCollection => _firestore.collection('users');
@@ -97,6 +97,8 @@ class UsersFirestore {
     String contactoId,
     String contactoName,
     Map<String, dynamic> data,
+    String uidRemitente,
+    String nombreRemitente,
   ) async {
     try {
       // Referencia
@@ -116,8 +118,8 @@ class UsersFirestore {
       // Actualizamos collection con info
       await mensajesCollection.doc(contactoId).set(
         {
-          'uid_remitente': uidUser,
-          'nombre_remitente': nameUser,
+          'uid_remitente': uidRemitente,
+          'nombre_remitente': nombreRemitente,
           'nombre_destino': contactoName,
           'uid_destino': contactoId,
           'ultimaActualizacion': DateTime.now(),

@@ -224,6 +224,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     onPressed: () async {
                       String userIdUser =
                           FirebaseAuth.instance.currentUser!.uid;
+                      String? userName =
+                          FirebaseAuth.instance.currentUser!.displayName;
                       String message = _messageController.text;
                       String contactoId = widget.uid; // ID de contact
 
@@ -246,11 +248,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         if (contactoIdDB != null) {
                           // Llamamos método para crear la subcolección
                           usersFirestore.crearSubcoleccionMensajes(
-                            userIdDB,
-                            widget.uid,
-                            widget.nombre,
-                            data,
-                          );
+                              userIdDB,
+                              widget.uid,
+                              widget.nombre,
+                              data,
+                              userIdUser,
+                              userName!);
                         } else {
                           print(
                               'No se encontró el ID del contacto en la base de datos.');
