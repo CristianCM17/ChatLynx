@@ -133,39 +133,25 @@ class UsersFirestore {
     }
   }
 
-  Future<List<Map<String, dynamic>>> consultarMensajesEntreUsuarios(
+  Stream<List<Map<String, dynamic>>> consultarMensajesEntreUsuariosStream(
     String userId,
     String contactoId,
-  ) async {
+  ) async* {
     try {
+      String? userIdEncontrado = await encontrarUserIdPorUid(userId);
       // Retrieve user document reference
-      DocumentReference userDocRef = usersCollection.doc();
+      DocumentReference userDocRef = usersCollection.doc(userIdEncontrado);
       // Construct messages collection reference
       CollectionReference mensajesCollection = userDocRef
           .collection('mensajes')
           .doc(contactoId)
           .collection('listamensajes');
-      // Fetch messages
-      QuerySnapshot snapshot = await mensajesCollection.get();
-      // Print debug message
-      print('Recuperando mensajes para $userId y $contactoId');
 
-      // Convert documents to map list
-      List<Map<String, dynamic>> mensajes = [];
-      snapshot.docs.forEach((doc) {
-        // Convert document data to map
-        Map<String, dynamic> mensajeData = doc.data() as Map<String, dynamic>;
-        // Check if document exists and contains data
-        if (mensajeData.isNotEmpty) {
-          // Add message data to list
-          mensajes.add(mensajeData);
-          print('ID de mensaje: ${doc.id}, Datos: $mensajeData');
-        }
+      yield* mensajesCollection.snapshots().map((snapshot) {
+        return snapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
       });
-      // Print debug message
-      print('Recuperados ${mensajes.length} mensajes');
-
-      return mensajes;
     } catch (error) {
       // Log error message
       print('Error al consultar mensajes entre usuarios: $error');

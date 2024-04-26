@@ -1,8 +1,10 @@
 import 'package:chatlynx/screens/image_view_screen.dart';
 import 'package:chatlynx/services/users_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String imageURL;
@@ -96,44 +98,57 @@ class _ConversationScreenState extends State<ConversationScreen> {
         child: Column(
           children: [
             Expanded(
-              child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: usersFirestore.consultarMensajesEntreUsuarios(
-                    userId, widget.uid),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                child: StreamBuilder<List<Map<String, dynamic>>>(
+              stream: usersFirestore.consultarMensajesEntreUsuariosStream(
+                  userId, widget.uid),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  if (snapshot.hasError) {
+                    return Text('Error al cargar los mensajes');
                   } else {
-                    if (snapshot.hasError) {
-                      return Text('Error al cargar los mensajes');
+                    if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          Map<String, dynamic> mensaje = snapshot.data![index];
+                          //Convertimos fecha
+                          Timestamp timestamp = mensaje['fecha'];
+                          DateTime dateTime = timestamp.toDate();
+                          // String formattedDate =
+                          // DateFormat('dd/MM/yyyy HH:mm a').format(dateTime);
+                          String formattedDate =
+                              DateFormat('HH:mm a').format(dateTime);
+
+                          return ListTile(
+                            title: Text(
+                              mensaje['contenido'],
+                              style: GoogleFonts.poppins(color: Colors.white),
+                            ),
+                            subtitle: Text(
+                              formattedDate,
+                              style: GoogleFonts.poppins(color: Colors.grey),
+                            ),
+                          );
+                        },
+                      );
                     } else {
-                      if (snapshot.data != null && snapshot.data!.isNotEmpty) {
-                        return ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            Map<String, dynamic> mensaje =
-                                snapshot.data![index];
-                            return ListTile(
-                              title: Text(mensaje['contenido']),
-                              subtitle: Text(mensaje['fecha']),
-                            );
-                          },
-                        );
-                      } else {
-                        return Center(
-                          child: Text(
-                            'No hay mensajes aún',
-                            style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                      return Center(
+                        child: Text(
+                          'No hay mensajes aún',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                        );
-                      }
+                        ),
+                      );
                     }
                   }
-                },
-              ),
-            ),
+                }
+              },
+            )),
 
             //MENU PARA MENSAJE
             Container(
