@@ -21,6 +21,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
           context,
           MaterialPageRoute(
               builder: (context) => const ConversationScreen(
+                    uid: "",
                     nombre: "",
                     imageURL: "https://via.placeholder.com/52x52",
                   )),

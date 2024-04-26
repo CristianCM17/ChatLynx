@@ -1,4 +1,6 @@
 import 'package:chatlynx/screens/image_view_screen.dart';
+import 'package:chatlynx/services/users_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,8 +10,12 @@ import 'package:photo_view/photo_view.dart';
 class ConversationScreen extends StatefulWidget {
   final String imageURL;
   final String nombre;
+  final String uid;
   const ConversationScreen(
-      {super.key, required this.imageURL, required this.nombre});
+      {super.key,
+      required this.imageURL,
+      required this.nombre,
+      required this.uid});
 
   @override
   State<ConversationScreen> createState() => _ConversationScreenState();
@@ -17,6 +23,7 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final UsersFirestore usersFirestore = UsersFirestore();
 
   @override
   void dispose() {
@@ -185,10 +192,44 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.send_rounded),
-                    onPressed: () {
+                    onPressed: () async {
+                      String userIdUser =
+                          FirebaseAuth.instance.currentUser!.uid;
                       String message = _messageController.text;
+                      String contactoId = widget.uid; // ID de contact
+
                       print('Mensaje enviado: $message');
                       _messageController.clear();
+
+                      // Creacion de msj
+                      Map<String, dynamic> data = {
+                        'contenido': message,
+                        'fecha': DateTime.now(),
+                      };
+
+                      //ID usuario actual en BD
+                      String? userIdDB = await usersFirestore
+                          .encontrarUserIdPorUid(userIdUser);
+                      if (userIdDB != null) {
+                        // ID contact desde subcolección contactos
+                        String? contactoIdDB = await usersFirestore
+                            .encontrarUserIdPorUid(contactoId);
+                        if (contactoIdDB != null) {
+                          // Llamamos método para crear la subcolección
+                          usersFirestore.crearSubcoleccionMensajes(
+                            userIdDB,
+                            widget.uid,
+                            widget.nombre,
+                            data,
+                          );
+                        } else {
+                          print(
+                              'No se encontró el ID del contacto en la base de datos.');
+                        }
+                      } else {
+                        print(
+                            'No se encontró el ID del usuario actual en la base de datos.');
+                      }
                     },
                     style: const ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll(Colors.green),

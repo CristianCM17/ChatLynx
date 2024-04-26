@@ -23,6 +23,7 @@ class _ContactWidgetState extends State<ContactWidget> {
           context,
           MaterialPageRoute(
               builder: (context) => ConversationScreen(
+                    uid: widget.usersData!.get("uid"),
                     nombre: widget.usersData!.get("nombre"),
                     imageURL: widget.usersData!.get("photoURL"),
                   )),
