@@ -105,16 +105,16 @@ class UsersFirestore {
       CollectionReference mensajesCollection =
           userDocRef.collection('mensajes');
       // Generamos name de doc
-      String nombreDocumento = '$contactoId-$contactoName';
+      // String nombreDocumento = '$contactoId-$contactoName';
 
       // Accedemos a subcollection dentro de coleccion mensajes
       CollectionReference listaMensajesCollection =
-          mensajesCollection.doc(nombreDocumento).collection('listamensajes');
+          mensajesCollection.doc(contactoId).collection('listamensajes');
       // Nuevo doc a subcollection
       await listaMensajesCollection.doc().set(data);
 
       // Actualizamos collection con info
-      await mensajesCollection.doc(nombreDocumento).set(
+      await mensajesCollection.doc(contactoId).set(
         {
           'uid_remitente': uidUser,
           'nombre_remitente': nameUser,
