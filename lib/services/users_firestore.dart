@@ -1,6 +1,5 @@
 import 'package:chatlynx/services/google_auth_firebase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class UsersFirestore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -147,7 +146,10 @@ class UsersFirestore {
           .doc(contactoId)
           .collection('listamensajes');
 
-      yield* mensajesCollection.snapshots().map((snapshot) {
+      yield* mensajesCollection
+          .orderBy('fecha', descending: false)
+          .snapshots()
+          .map((snapshot) {
         return snapshot.docs
             .map((doc) => doc.data() as Map<String, dynamic>)
             .toList();
