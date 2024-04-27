@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:chatlynx/screens/image_view_screen.dart';
+import 'package:chatlynx/services/messages_firestore.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +26,7 @@ class ConversationScreen extends StatefulWidget {
 class _ConversationScreenState extends State<ConversationScreen> {
   final TextEditingController _messageController = TextEditingController();
   final UsersFirestore usersFirestore = UsersFirestore();
+  final MessagesFireStore messagesFireStore = MessagesFireStore();
   String userId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
@@ -101,9 +103,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
         child: Column(
           children: [
             Expanded(
-                child: StreamBuilder<List<Map<String, dynamic>>>(
-              stream: usersFirestore.consultarMensajesEntreUsuariosStream(
-                  userId, widget.uid),
+                child: StreamBuilder(
+              stream: messagesFireStore.getMessages(userId, widget.uid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -111,13 +112,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   if (snapshot.hasError) {
                     return const Text('Error al cargar los mensajes');
                   } else {
-                    if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+                    if (snapshot.data != null) {
                       return ListView.builder(
-                        itemCount: snapshot.data!.length,
+                        itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
-                          Map<String, dynamic> mensaje = snapshot.data![index];
+                          var mensaje = snapshot.data!.docs[index];
                           //Convertimos fecha
-                          Timestamp timestamp = mensaje['fecha'];
+                          Timestamp timestamp = mensaje['hora'];
                           DateTime dateTime = timestamp.toDate();
                           // String formattedDate =
                           //     DateFormat('dd/MM/yyyy HH:mm a').format(dateTime);
@@ -153,7 +154,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                           CrossAxisAlignment.end,
                                       children: [
                                         Text(
-                                          mensaje['contenido'],
+                                          mensaje['message'],
                                           style: GoogleFonts.poppins(
                                             color: Colors.white,
                                           ),
@@ -290,46 +291,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   IconButton(
                     icon: const Icon(Icons.send_rounded),
                     onPressed: () async {
-                      String userIdUser =
-                          FirebaseAuth.instance.currentUser!.uid;
-                      String? userName =
-                          FirebaseAuth.instance.currentUser!.displayName;
+                      String otherUserid = widget.uid;
                       String message = _messageController.text;
-                      String contactoId = widget.uid; // ID de contact
 
-                      print('Mensaje enviado: $message');
+                      await messagesFireStore.sendMessage(
+                          otherUserid, userId, message);
+
+                      print("Mensaje enviado ${message}");
                       _messageController.clear();
-
-                      // Creacion de msj
-                      Map<String, dynamic> data = {
-                        'contenido': message,
-                        'fecha': DateTime.now(),
-                      };
-
-                      //ID usuario actual en BD
-                      String? userIdDB = await usersFirestore
-                          .encontrarUserIdPorUid(userIdUser);
-                      if (userIdDB != null) {
-                        // ID contact desde subcolección contactos
-                        String? contactoIdDB = await usersFirestore
-                            .encontrarUserIdPorUid(contactoId);
-                        if (contactoIdDB != null) {
-                          // Llamamos método para crear la subcolección
-                          usersFirestore.crearSubcoleccionMensajes(
-                              userIdDB,
-                              widget.uid,
-                              widget.nombre,
-                              data,
-                              userIdUser,
-                              userName!);
-                        } else {
-                          print(
-                              'No se encontró el ID del contacto en la base de datos.');
-                        }
-                      } else {
-                        print(
-                            'No se encontró el ID del usuario actual en la base de datos.');
-                      }
                     },
                     style: const ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll(Colors.green),
