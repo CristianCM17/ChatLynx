@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:chatlynx/screens/image_view_screen.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -33,6 +35,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black.withOpacity(0.90),
@@ -103,10 +106,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   userId, widget.uid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else {
                   if (snapshot.hasError) {
-                    return Text('Error al cargar los mensajes');
+                    return const Text('Error al cargar los mensajes');
                   } else {
                     if (snapshot.data != null && snapshot.data!.isNotEmpty) {
                       return ListView.builder(
@@ -117,18 +120,67 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           Timestamp timestamp = mensaje['fecha'];
                           DateTime dateTime = timestamp.toDate();
                           // String formattedDate =
-                          // DateFormat('dd/MM/yyyy HH:mm a').format(dateTime);
+                          //     DateFormat('dd/MM/yyyy HH:mm a').format(dateTime);
                           String formattedDate =
                               DateFormat('HH:mm a').format(dateTime);
 
-                          return ListTile(
-                            title: Text(
-                              mensaje['contenido'],
-                              style: GoogleFonts.poppins(color: Colors.white),
-                            ),
-                            subtitle: Text(
-                              formattedDate,
-                              style: GoogleFonts.poppins(color: Colors.grey),
+                          return Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 1, horizontal: 8),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: ConstrainedBox(
+                                //Para cuando el msj es muy largo
+                                constraints: BoxConstraints(
+                                  maxWidth: size.width * 0.75,
+                                ),
+                                child: IntrinsicWidth(
+                                  //Ajuste al msj dinamicamente
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0, vertical: 8.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade800,
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(16.0),
+                                        topRight: Radius.circular(16.0),
+                                        bottomLeft: Radius.circular(16.0),
+                                        bottomRight: Radius.circular(0.0),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          mensaje['contenido'],
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              formattedDate,
+                                              style: GoogleFonts.poppins(
+                                                  color: Colors.grey,
+                                                  fontSize: 13),
+                                            ),
+                                            // const SizedBox(width: 4.0),
+                                            // const Icon(
+                                            //   Icons.done_all,
+                                            //   color: Colors.blue,
+                                            //   size: 16.0,
+                                            // ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           );
                         },
@@ -152,7 +204,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
             //MENU PARA MENSAJE
             Container(
-              margin: const EdgeInsets.only(left: 10, right: 10, bottom: 15),
+              margin: const EdgeInsets.only(
+                  left: 10, right: 10, bottom: 15, top: 5),
               child: Row(
                 children: [
                   Expanded(
