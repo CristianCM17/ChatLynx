@@ -28,10 +28,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final UsersFirestore usersFirestore = UsersFirestore();
   final MessagesFireStore messagesFireStore = MessagesFireStore();
   String userId = FirebaseAuth.instance.currentUser!.uid;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -124,7 +126,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         ),
                       );
                     } else {
+                      Future.delayed(Duration(microseconds: 0)).then((_) {
+                        _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeOut,
+                        );
+                      });
                       return ListView.builder(
+                        controller: _scrollController,
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           var mensaje = snapshot.data!.docs[index];
