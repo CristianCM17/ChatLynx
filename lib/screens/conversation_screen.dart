@@ -311,23 +311,27 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       String message = _messageController.text;
 
                       // Creacion de msj
-                      Map<String, dynamic> data = {
-                        'message': message,
-                        'hora': DateTime.now(),
-                        'receiverId': userIdContact,
-                        'senderId': userId,
-                      };
+                      if (message.trim().isNotEmpty) {
+                        Map<String, dynamic> data = {
+                          'message': message,
+                          'hora': DateTime.now(),
+                          'receiverId': userIdContact,
+                          'senderId': userId,
+                        };
 
-                      await messagesFireStore.sendMessage(
-                          nameContact,
-                          userIdContact,
-                          userId,
-                          userName!,
-                          photoURLContact,
-                          data);
+                        await messagesFireStore.sendMessage(
+                            nameContact,
+                            userIdContact,
+                            userId,
+                            userName!,
+                            photoURLContact,
+                            data);
 
-                      print("Mensaje enviado ${message}");
-                      _messageController.clear();
+                        print("Mensaje enviado ${message}");
+                        _messageController.clear();
+                      } else {
+                        print("No vacios");
+                      }
                     },
                     style: const ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll(Colors.green),
