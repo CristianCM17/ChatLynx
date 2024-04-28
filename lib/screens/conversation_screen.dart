@@ -305,6 +305,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     onPressed: () async {
                       String userIdContact = widget.uid;
                       String nameContact = widget.nombre;
+                      String photoURLContact = widget.imageURL;
                       String? userName =
                           FirebaseAuth.instance.currentUser!.displayName;
                       String message = _messageController.text;
@@ -318,7 +319,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       };
 
                       await messagesFireStore.sendMessage(
-                          nameContact, userIdContact, userId, userName!, data);
+                          nameContact,
+                          userIdContact,
+                          userId,
+                          userName!,
+                          photoURLContact,
+                          data);
 
                       print("Mensaje enviado ${message}");
                       _messageController.clear();

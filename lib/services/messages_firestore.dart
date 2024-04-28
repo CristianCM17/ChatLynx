@@ -10,6 +10,7 @@ class MessagesFireStore {
     String receiverId,
     String currentUserId,
     String currentUserName,
+    String photoURL,
     Map<String, dynamic> data,
   ) async {
     final Timestamp timestamp = Timestamp.now();
@@ -23,6 +24,8 @@ class MessagesFireStore {
         'Usuarios': '$currentUserName - $contactName',
         'ultimaActualizacion': DateTime.now(),
         'ultimoMensaje': data['message'],
+        'photoURLReceiver': photoURL,
+        'nameReceiver': contactName,
       },
     );
 
@@ -44,5 +47,13 @@ class MessagesFireStore {
         .collection('messages')
         .orderBy('hora', descending: false)
         .snapshots();
+  }
+
+  Stream<DocumentSnapshot> consultarChatRoom(
+      String currentUserId, String receiverId) {
+    List<String> ids = [currentUserId, receiverId];
+    ids.sort();
+    String chatRoomId = ids.join("_");
+    return chatRoomsCollection.doc(chatRoomId).snapshots();
   }
 }
