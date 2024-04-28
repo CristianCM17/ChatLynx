@@ -5,16 +5,26 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ConversationWidget extends StatefulWidget {
-  const ConversationWidget({super.key});
+
+  final Map<String, dynamic>? chatRoomdata;
+  
+  const ConversationWidget({super.key, this.chatRoomdata});
+
+  
 
   @override
   State<ConversationWidget> createState() => _ConversationWidgetState();
-}
 
+
+  
+}
 class _ConversationWidgetState extends State<ConversationWidget> {
+   
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+  
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -55,7 +65,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                       decoration: ShapeDecoration(
                         image: DecorationImage(
                           image:
-                              NetworkImage("https://via.placeholder.com/52x52"),
+                              NetworkImage(widget.chatRoomdata!['photoURLReceiver']),
                           fit: BoxFit.cover,
                         ),
                         shape: RoundedRectangleBorder(
@@ -69,7 +79,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                   margin: EdgeInsets.only(top: 6),
                   alignment: Alignment.topRight,
                   child: Text(
-                    '2 min ago',
+                    '2 min',
                     textAlign: TextAlign.right,
                     style: GoogleFonts.poppins(
                       color: Color(0xFFE6D3B5),
@@ -91,12 +101,12 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                           left: 0,
                           top: 0,
                           child: Text(
-                            'Alex Linderson',
+                            widget.chatRoomdata!["nameReceiver"],
                             style: GoogleFonts.poppins(
                               color: Colors.white,
-                              fontSize: 20,
+                              fontSize: 10,
                               fontWeight: FontWeight.w500,
-                              height: 0.85,
+                              height: 2.5,
                             ),
                           ),
                         ),
@@ -104,7 +114,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                           left: 0,
                           top: 26,
                           child: Text(
-                            'How are you today?',
+                            widget.chatRoomdata!['ultimoMensaje'],
                             style: GoogleFonts.poppins(
                               color: Color(0xFFE6D3B5),
                               fontSize: 12,

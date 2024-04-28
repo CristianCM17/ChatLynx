@@ -1,11 +1,14 @@
 import 'package:chatlynx/services/google_auth_firebase.dart';
+import 'package:chatlynx/services/messages_firestore.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:chatlynx/widgets/calls_widget.dart';
 import 'package:chatlynx/widgets/contact_widget.dart';
 import 'package:chatlynx/widgets/conversation_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key});
@@ -18,29 +21,14 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
   final UsersFirestore usersFirestore = UsersFirestore();
+  final MessagesFireStore messagesFirestore = MessagesFireStore();
   late List<Widget>
       _widgetOptions; // Definir la lista sin inicializarla directamente
 
-  List<Widget> _buildWidgetOptions(uid) {
+  List<Widget> _buildWidgetOptions(currentUid) {
     return <Widget>[
       //MENSAJES
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            ConversationWidget(),
-            ConversationWidget(),
-            ConversationWidget(),
-            ConversationWidget(),
-            ConversationWidget(),
-            ConversationWidget(),
-            ConversationWidget(),
-            ConversationWidget(),
-            ConversationWidget(),
-            ConversationWidget(),
-            ConversationWidget(),
-          ],
-        ),
-      ),
+      buildConversationHistory(currentUid),
       //VIDEOLLAMADAS
       SingleChildScrollView(
         child: Column(
@@ -55,13 +43,35 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       //CONTACTOS
-      buildConversationStreamBuilder(uid), // Movido aquí
+      buildConversationStreamBuilder(currentUid), // Movido aquí
     ];
   }
 
-  Widget buildConversationStreamBuilder(uid) {
+  Widget buildConversationHistory(currentUid) {
     return FutureBuilder(
-      future: usersFirestore.encontrarUserIdPorUid(uid),
+      future: messagesFirestore.getChatRoomsForUser(currentUid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Text("Error al obtener datos");
+        } else if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              return ConversationWidget(chatRoomdata: snapshot.data![index]);
+            },
+          );
+        } else {
+          return const Text("No hay datos disponibles");
+        }
+      },
+    );
+  }
+
+  Widget buildConversationStreamBuilder(currentUid) {
+    return FutureBuilder(
+      future: usersFirestore.encontrarUserIdPorUid(currentUid),
       builder: (BuildContext context, AsyncSnapshot userInfoSnapshot) {
         if (userInfoSnapshot.connectionState == ConnectionState.waiting) {
           return Center(child: const CircularProgressIndicator());
