@@ -2,26 +2,35 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessagesFireStore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  CollectionReference get chatRoomsCollection =>
+      _firestore.collection('chatRooms');
 
   Future<void> sendMessage(
-      String receiverId, String currentUserId, String message) async {
+    String contactName,
+    String receiverId,
+    String currentUserId,
+    String currentUserName,
+    Map<String, dynamic> data,
+  ) async {
     final Timestamp timestamp = Timestamp.now();
-
-    Map<String, dynamic> newMessage = {
-      "senderId": currentUserId,
-      "receiverId": receiverId,
-      "message": message,
-      "hora": timestamp
-    };
 
     List<String> ids = [currentUserId, receiverId];
     ids.sort();
     String chatRoomId = ids.join("_");
+
+    await chatRoomsCollection.doc(chatRoomId).set(
+      {
+        'Usuarios': '$currentUserName - $contactName',
+        'ultimaActualizacion': DateTime.now(),
+        'ultimoMensaje': data['message'],
+      },
+    );
+
     await _firestore
         .collection('chatRooms')
         .doc(chatRoomId)
         .collection('messages')
-        .add(newMessage);
+        .add(data);
   }
 
   Stream<QuerySnapshot> getMessages(String userId, String otherUserid) {

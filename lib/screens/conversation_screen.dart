@@ -112,11 +112,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   if (snapshot.hasError) {
                     return const Text('Error al cargar los mensajes');
                   } else {
-                    if (snapshot.data != null) {
+                    if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+                      return Center(
+                        child: Text(
+                          'No hay mensajes aún',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    } else {
                       return ListView.builder(
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           var mensaje = snapshot.data!.docs[index];
+                          String senderId = mensaje['senderId'];
+                          bool isCurrentUser = senderId == userId;
+
                           //Convertimos fecha
                           Timestamp timestamp = mensaje['hora'];
                           DateTime dateTime = timestamp.toDate();
@@ -129,7 +143,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             margin: const EdgeInsets.symmetric(
                                 vertical: 1, horizontal: 8),
                             child: Align(
-                              alignment: Alignment.centerRight,
+                              alignment: isCurrentUser
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
                               child: ConstrainedBox(
                                 //Para cuando el msj es muy largo
                                 constraints: BoxConstraints(
@@ -141,12 +157,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16.0, vertical: 8.0),
                                     decoration: BoxDecoration(
-                                      color: Colors.grey.shade800,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(16.0),
+                                      color: isCurrentUser
+                                          ? Colors.grey.shade800
+                                          : const Color.fromRGBO(
+                                              242, 247, 251, 1),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(
+                                            isCurrentUser ? 16.0 : 0.0),
                                         topRight: Radius.circular(16.0),
                                         bottomLeft: Radius.circular(16.0),
-                                        bottomRight: Radius.circular(0.0),
+                                        bottomRight: Radius.circular(
+                                            isCurrentUser ? 0.0 : 16.0),
                                       ),
                                     ),
                                     child: Column(
@@ -156,7 +177,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                         Text(
                                           mensaje['message'],
                                           style: GoogleFonts.poppins(
-                                            color: Colors.white,
+                                            color: isCurrentUser
+                                                ? Colors.white
+                                                : Colors.black,
                                           ),
                                         ),
                                         Row(
@@ -185,17 +208,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             ),
                           );
                         },
-                      );
-                    } else {
-                      return Center(
-                        child: Text(
-                          'No hay mensajes aún',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                       );
                     }
                   }
@@ -291,11 +303,22 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   IconButton(
                     icon: const Icon(Icons.send_rounded),
                     onPressed: () async {
-                      String otherUserid = widget.uid;
+                      String userIdContact = widget.uid;
+                      String nameContact = widget.nombre;
+                      String? userName =
+                          FirebaseAuth.instance.currentUser!.displayName;
                       String message = _messageController.text;
 
+                      // Creacion de msj
+                      Map<String, dynamic> data = {
+                        'message': message,
+                        'hora': DateTime.now(),
+                        'receiverId': userIdContact,
+                        'senderId': userId,
+                      };
+
                       await messagesFireStore.sendMessage(
-                          otherUserid, userId, message);
+                          nameContact, userIdContact, userId, userName!, data);
 
                       print("Mensaje enviado ${message}");
                       _messageController.clear();
