@@ -39,8 +39,12 @@ class _ConversationWidgetState extends State<ConversationWidget> {
 
     // Verificacion de URL
     String ultimoMensaje = widget.chatRoomdata!['ultimoMensaje'];
-    if (ultimoMensaje.startsWith('https://firebasestorage.googleapis.com/')) {
+    if (ultimoMensaje.startsWith(
+        'https://firebasestorage.googleapis.com/v0/b/chat-82a68.appspot.com/o/images')) {
       ultimoMensaje = '📷 Imagen';
+    } else if (ultimoMensaje.startsWith(
+        'https://firebasestorage.googleapis.com/v0/b/chat-82a68.appspot.com/o/videos')) {
+      ultimoMensaje = '📽️ Video';
     }
 
     return InkWell(

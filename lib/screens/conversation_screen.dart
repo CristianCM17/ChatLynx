@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'dart:async';
 import 'package:chatlynx/screens/image_view_screen.dart';
+import 'package:chatlynx/screens/video_player_screen.dart';
 import 'package:chatlynx/services/messages_firestore.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -106,12 +107,75 @@ class _ConversationScreenState extends State<ConversationScreen> {
     }
   }
 
-  Future<void> _pickVideo() async {
+  Future<void> _pickVideoFromGallery() async {
     final picker = ImagePicker();
     final pickedVideo = await picker.pickVideo(source: ImageSource.gallery);
 
     if (pickedVideo != null) {
       File videoFile = File(pickedVideo.path);
+
+      // Subimos el video almacenamiento de  Storage
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('videos/${DateTime.now().millisecondsSinceEpoch}.mp4');
+      UploadTask uploadTask = ref.putFile(videoFile);
+      await uploadTask.whenComplete(() => null);
+
+      String videoUrl = await ref.getDownloadURL();
+      print('URL del video subido: $videoUrl');
+
+      Map<String, dynamic> data = {
+        'message': videoUrl,
+        'hora': DateTime.now(),
+        'receiverId': widget.uid,
+        'senderId': userId,
+        'type': 'video',
+      };
+      await messagesFireStore.sendMessage(
+        widget.nombre,
+        widget.uid,
+        userId,
+        FirebaseAuth.instance.currentUser!.displayName!,
+        widget.imageURL,
+        data,
+      );
+      _messageController.clear();
+    }
+  }
+
+  Future<void> _pickVideoFromCamera() async {
+    final picker = ImagePicker();
+    final pickedVideo = await picker.pickVideo(source: ImageSource.camera);
+
+    if (pickedVideo != null) {
+      File videoFile = File(pickedVideo.path);
+
+      // Subimos el video almacenamiento de  Storage
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('videos/${DateTime.now().millisecondsSinceEpoch}.mp4');
+      UploadTask uploadTask = ref.putFile(videoFile);
+      await uploadTask.whenComplete(() => null);
+
+      String videoUrl = await ref.getDownloadURL();
+      print('URL del video subido: $videoUrl');
+
+      Map<String, dynamic> data = {
+        'message': videoUrl,
+        'hora': DateTime.now(),
+        'receiverId': widget.uid,
+        'senderId': userId,
+        'type': 'video',
+      };
+      await messagesFireStore.sendMessage(
+        widget.nombre,
+        widget.uid,
+        userId,
+        FirebaseAuth.instance.currentUser!.displayName!,
+        widget.imageURL,
+        data,
+      );
+      _messageController.clear();
     }
   }
 
@@ -289,7 +353,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                             width: 200,
                                             height: 200,
                                           ),
-                                        if (mensaje['type'] != 'image')
+                                        if (mensaje['type'] == 'video')
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                vertical: 1, horizontal: 8),
+                                            child: Align(
+                                              alignment: isCurrentUser
+                                                  ? Alignment.centerRight
+                                                  : Alignment.centerLeft,
+                                              child: SizedBox(
+                                                width: size.width * 0.75,
+                                                height: 200,
+                                                child: VideoPlayerScreen(
+                                                    videoUrl:
+                                                        mensaje['message']),
+                                              ),
+                                            ),
+                                          ),
+                                        if (mensaje['type'] != 'image' &&
+                                            mensaje['type'] != 'video')
                                           SelectableText(
                                             mensaje[
                                                 'message'], // El texto del mensaje
@@ -375,13 +457,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                         child: ListTile(
                                           leading: const Icon(
                                               Icons.video_camera_back_rounded),
-                                          title: Text('Vídeo'),
+                                          title: const Text('Vídeo'),
                                           titleTextStyle: GoogleFonts.poppins(
                                               color: Colors.black),
                                           onTap: () {
                                             print('Añadir vídeo');
                                             Navigator.pop(context);
-                                            _pickVideo();
+                                            showVideoOptions();
                                           },
                                         ),
                                       ),
@@ -506,5 +588,58 @@ class _ConversationScreenState extends State<ConversationScreen> {
         ),
       ),
     );
+  }
+
+  void showVideoOptions() {
+    showDialog(
+        context: context,
+        builder: ((context) {
+          return AlertDialog(
+            title: Text(
+              "Seleccionar fuente de vídeo",
+              style: GoogleFonts.poppins(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(
+                    Icons.video_call_rounded,
+                    size: 32,
+                  ),
+                  title: const Text('De cámara'),
+                  titleTextStyle: GoogleFonts.poppins(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickVideoFromCamera();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.video_camera_back_rounded,
+                    size: 28,
+                  ),
+                  title: const Text('De galería'),
+                  titleTextStyle: GoogleFonts.poppins(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickVideoFromGallery();
+                  },
+                ),
+              ],
+            ),
+          );
+        }));
   }
 }
