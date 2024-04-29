@@ -106,6 +106,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
     }
   }
 
+  Future<void> _pickVideo() async {
+    final picker = ImagePicker();
+    final pickedVideo = await picker.pickVideo(source: ImageSource.gallery);
+
+    if (pickedVideo != null) {
+      File videoFile = File(pickedVideo.path);
+    }
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
