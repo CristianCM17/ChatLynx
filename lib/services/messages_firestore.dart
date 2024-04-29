@@ -54,27 +54,25 @@ class MessagesFireStore {
     List<String> ids = [currentUserId, receiverId];
     ids.sort();
     String chatRoomId = ids.join("_");
-   
 
     return chatRoomsCollection.doc(chatRoomId).snapshots();
   }
 
-  Future<List<Map<String,dynamic>>> getChatRoomsForUser(String userId) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-      .collection('chatRooms')
-      .get();
+  Future<List<Map<String, dynamic>>> getChatRoomsForUser(String userId) async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('chatRooms').get();
 
-    List<Map<String,dynamic>> filteredDocs = [];
+    List<Map<String, dynamic>> filteredDocs = [];
 
     querySnapshot.docs.forEach((doc) {
       List<String> ids = doc.id.split('_');
       if (ids.contains(userId)) {
-        Map<String,dynamic> chatRoomdata = {
-          "Usuarios" : doc.get("Usuarios"),
-          "nameReceiver" : doc.get("nameReceiver"),
-          "photoURLReceiver" : doc.get("photoURLReceiver"),
+        Map<String, dynamic> chatRoomdata = {
+          "Usuarios": doc.get("Usuarios"),
+          "nameReceiver": doc.get("nameReceiver"),
+          "photoURLReceiver": doc.get("photoURLReceiver"),
           "ultimaActualizacion": doc.get("ultimaActualizacion"),
-          "ultimoMensaje" : doc.get("ultimoMensaje"),
+          "ultimoMensaje": doc.get("ultimoMensaje"),
         };
         filteredDocs.add(chatRoomdata);
       }

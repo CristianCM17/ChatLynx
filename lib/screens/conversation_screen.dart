@@ -1,13 +1,17 @@
+import 'dart:io';
 import 'dart:ui';
-
+import 'dart:async';
 import 'package:chatlynx/screens/image_view_screen.dart';
 import 'package:chatlynx/services/messages_firestore.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String imageURL;
@@ -29,6 +33,78 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final MessagesFireStore messagesFireStore = MessagesFireStore();
   String userId = FirebaseAuth.instance.currentUser!.uid;
   final ScrollController _scrollController = ScrollController();
+
+  Future<void> _pickImageFromGallery() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      File imageFile = File(pickedImage.path);
+      // Subimos a almacenamiento de Storage
+      Reference ref =
+          FirebaseStorage.instanceFor(bucket: "gs://chat-82a68.appspot.com")
+              .ref()
+              .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      UploadTask uploadTask = ref.putFile(imageFile);
+      await uploadTask.whenComplete(() => null);
+      // Obtenemos URL
+      String imageUrl = await ref.getDownloadURL();
+      print('URL de la imagen subida: $imageUrl');
+
+      Map<String, dynamic> data = {
+        'message': imageUrl,
+        'hora': DateTime.now(),
+        'receiverId': widget.uid,
+        'senderId': userId,
+        'type': 'image',
+      };
+      await messagesFireStore.sendMessage(
+        widget.nombre,
+        widget.uid,
+        userId,
+        FirebaseAuth.instance.currentUser!.displayName!,
+        widget.imageURL,
+        data,
+      );
+      _messageController.clear();
+    }
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedImage != null) {
+      File imageFile = File(pickedImage.path);
+      // Subimos a almacenamiento de Storage
+      Reference ref =
+          FirebaseStorage.instanceFor(bucket: "gs://chat-82a68.appspot.com")
+              .ref()
+              .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      UploadTask uploadTask = ref.putFile(imageFile);
+      await uploadTask.whenComplete(() => null);
+      // Obtenemos URL
+      String imageUrl = await ref.getDownloadURL();
+      print('URL de la imagen subida: $imageUrl');
+
+      Map<String, dynamic> data = {
+        'message': imageUrl,
+        'hora': DateTime.now(),
+        'receiverId': widget.uid,
+        'senderId': userId,
+        'type': 'image',
+      };
+      await messagesFireStore.sendMessage(
+        widget.nombre,
+        widget.uid,
+        userId,
+        FirebaseAuth.instance.currentUser!.displayName!,
+        widget.imageURL,
+        data,
+      );
+      _messageController.clear();
+    }
+  }
 
   @override
   void dispose() {
@@ -162,6 +238,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             formattedDate =
                                 DateFormat('HH:mm a').format(dateTime);
                           }
+
                           return Container(
                             margin: const EdgeInsets.symmetric(
                                 vertical: 1, horizontal: 8),
@@ -197,14 +274,22 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
                                       children: [
-                                        Text(
-                                          mensaje['message'],
-                                          style: GoogleFonts.poppins(
-                                            color: isCurrentUser
-                                                ? Colors.white
-                                                : Colors.black,
+                                        if (mensaje['type'] == 'image')
+                                          Image.network(
+                                            mensaje['message'],
+                                            width: 200,
+                                            height: 200,
                                           ),
-                                        ),
+                                        if (mensaje['type'] != 'image')
+                                          SelectableText(
+                                            mensaje[
+                                                'message'], // El texto del mensaje
+                                            style: GoogleFonts.poppins(
+                                              color: isCurrentUser
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
@@ -212,8 +297,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                             Text(
                                               formattedDate,
                                               style: GoogleFonts.poppins(
-                                                  color: Colors.grey,
-                                                  fontSize: 13),
+                                                color: Colors.grey,
+                                                fontSize: 13,
+                                              ),
                                             ),
                                             // const SizedBox(width: 4.0),
                                             // const Icon(
@@ -286,6 +372,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                           onTap: () {
                                             print('Añadir vídeo');
                                             Navigator.pop(context);
+                                            _pickVideo();
                                           },
                                         ),
                                       ),
@@ -309,9 +396,49 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 },
                               ),
                               IconButton(
-                                icon: const Icon(Icons.camera_alt_outlined),
+                                icon: const Icon(Icons.camera),
                                 onPressed: () {
-                                  print("Enviar imagen");
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return SafeArea(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            ListTile(
+                                              leading:
+                                                  const Icon(Icons.camera_alt),
+                                              title: Text(
+                                                'Tomar foto',
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                              ),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                _pickImageFromCamera();
+                                              },
+                                            ),
+                                            ListTile(
+                                              leading: const Icon(Icons.image),
+                                              title: Text(
+                                                'Seleccionar de galería',
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                              ),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                _pickImageFromGallery();
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
                                 },
                               ),
                             ],
@@ -340,6 +467,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           'hora': DateTime.now(),
                           'receiverId': userIdContact,
                           'senderId': userId,
+                          'type': 'text'
                         };
 
                         await messagesFireStore.sendMessage(

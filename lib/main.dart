@@ -17,6 +17,7 @@ void main() async {
       appId: "com.example.chatlynx",
       messagingSenderId: "843525052315",
       projectId: "chat-82a68",
+      storageBucket: "chat-82a68.appspot.com",
     ),
   );
 

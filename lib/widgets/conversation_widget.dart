@@ -37,6 +37,12 @@ class _ConversationWidgetState extends State<ConversationWidget> {
       formattedDate = DateFormat('HH:mm a').format(dateTime);
     }
 
+    // Verificacion de URL
+    String ultimoMensaje = widget.chatRoomdata!['ultimoMensaje'];
+    if (ultimoMensaje.startsWith('https://firebasestorage.googleapis.com/')) {
+      ultimoMensaje = '📷 Imagen';
+    }
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -126,7 +132,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                           left: 0,
                           top: 26,
                           child: Text(
-                            widget.chatRoomdata!['ultimoMensaje'],
+                            ultimoMensaje,
                             style: GoogleFonts.poppins(
                               color: Color(0xFFE6D3B5),
                               fontSize: 14,
