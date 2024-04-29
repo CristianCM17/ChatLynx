@@ -144,11 +144,24 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           //Convertimos fecha
                           Timestamp timestamp = mensaje['hora'];
                           DateTime dateTime = timestamp.toDate();
-                          // String formattedDate =
-                          //     DateFormat('dd/MM/yyyy HH:mm a').format(dateTime);
-                          String formattedDate =
-                              DateFormat('HH:mm a').format(dateTime);
-
+                          DateTime now = DateTime.now();
+                          String formattedDate;
+                          if (dateTime.year ==
+                                  now.year && // Verificamos fecha ayer
+                              dateTime.month == now.month &&
+                              dateTime.day == now.day - 1) {
+                            formattedDate =
+                                'Ayer, ${DateFormat('HH:mm a').format(dateTime)}';
+                          } else if (dateTime.year ==
+                                  now.year && // Si han pasado más de un día
+                              dateTime.month == now.month &&
+                              dateTime.day < now.day - 1) {
+                            formattedDate =
+                                DateFormat('dd/MM/yyyy').format(dateTime);
+                          } else {
+                            formattedDate =
+                                DateFormat('HH:mm a').format(dateTime);
+                          }
                           return Container(
                             margin: const EdgeInsets.symmetric(
                                 vertical: 1, horizontal: 8),
