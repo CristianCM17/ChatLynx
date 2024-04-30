@@ -10,7 +10,8 @@ class MessagesFireStore {
     String receiverId,
     String currentUserId,
     String currentUserName,
-    String photoURL,
+    String photoURLReceiver,
+    String photoURLSender,
     Map<String, dynamic> data,
   ) async {
     final Timestamp timestamp = Timestamp.now();
@@ -24,8 +25,12 @@ class MessagesFireStore {
         'Usuarios': '$currentUserName - $contactName',
         'ultimaActualizacion': DateTime.now(),
         'ultimoMensaje': data['message'],
-        'photoURLReceiver': photoURL,
+        'photoURLReceiver': photoURLReceiver,
         'nameReceiver': contactName,
+        'uidReceiver': receiverId,
+        'photoURLSender': photoURLSender,
+        'nameSender': currentUserName,
+        'uidSender': currentUserId,
       },
     );
 

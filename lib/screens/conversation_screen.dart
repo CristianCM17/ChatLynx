@@ -65,6 +65,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         userId,
         FirebaseAuth.instance.currentUser!.displayName!,
         widget.imageURL,
+        FirebaseAuth.instance.currentUser!.photoURL!,
         data,
       );
       _messageController.clear();
@@ -101,6 +102,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         userId,
         FirebaseAuth.instance.currentUser!.displayName!,
         widget.imageURL,
+        FirebaseAuth.instance.currentUser!.photoURL!,
         data,
       );
       _messageController.clear();
@@ -137,6 +139,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         userId,
         FirebaseAuth.instance.currentUser!.displayName!,
         widget.imageURL,
+        FirebaseAuth.instance.currentUser!.photoURL!,
         data,
       );
       _messageController.clear();
@@ -173,6 +176,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         userId,
         FirebaseAuth.instance.currentUser!.displayName!,
         widget.imageURL,
+        FirebaseAuth.instance.currentUser!.photoURL!,
         data,
       );
       _messageController.clear();
@@ -549,6 +553,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       String photoURLContact = widget.imageURL;
                       String? userName =
                           FirebaseAuth.instance.currentUser!.displayName;
+                      String? photoURLSender =
+                          FirebaseAuth.instance.currentUser!.photoURL;
                       String message = _messageController.text;
 
                       // Creacion de msj
@@ -567,6 +573,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             userId,
                             userName!,
                             photoURLContact,
+                            photoURLSender!,
                             data);
 
                         print("Mensaje enviado ${message}");
