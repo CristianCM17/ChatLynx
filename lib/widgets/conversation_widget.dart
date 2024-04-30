@@ -9,7 +9,9 @@ import 'package:intl/intl.dart';
 class ConversationWidget extends StatefulWidget {
   final Map<String, dynamic>? chatRoomdata;
 
-  const ConversationWidget({super.key, this.chatRoomdata});
+  final String? currentUid;
+
+  const ConversationWidget({super.key, this.chatRoomdata, this.currentUid});
 
   @override
   State<ConversationWidget> createState() => _ConversationWidgetState();
@@ -89,8 +91,12 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                       height: 52,
                       decoration: ShapeDecoration(
                         image: DecorationImage(
-                          image: NetworkImage(
-                              widget.chatRoomdata!['photoURLReceiver']),
+                          image: widget.currentUid ==
+                                  widget.chatRoomdata!['uidReceiver']
+                              ? NetworkImage(
+                                  widget.chatRoomdata!['photoURLSender'])
+                              : NetworkImage(
+                                  widget.chatRoomdata!['photoURLReceiver']),
                           fit: BoxFit.cover,
                         ),
                         shape: RoundedRectangleBorder(
@@ -126,7 +132,9 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                           left: 0,
                           top: 0,
                           child: Text(
-                            widget.chatRoomdata!["nameReceiver"],
+                            widget.currentUid == widget.chatRoomdata!['uidReceiver']
+                                ? widget.chatRoomdata!["nameSender"]
+                                : widget.chatRoomdata!["nameReceiver"],
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontSize: 13,

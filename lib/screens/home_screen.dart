@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
           return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              return ConversationWidget(chatRoomdata: snapshot.data![index]);
+              return ConversationWidget(chatRoomdata: snapshot.data![index],currentUid:currentUid);
             },
           );
         } else {

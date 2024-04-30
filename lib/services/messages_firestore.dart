@@ -75,9 +75,13 @@ class MessagesFireStore {
         Map<String, dynamic> chatRoomdata = {
           "Usuarios": doc.get("Usuarios"),
           "nameReceiver": doc.get("nameReceiver"),
+          "nameSender": doc.get("nameSender"),
           "photoURLReceiver": doc.get("photoURLReceiver"),
+          "photoURLSender": doc.get("photoURLSender"),
           "ultimaActualizacion": doc.get("ultimaActualizacion"),
           "ultimoMensaje": doc.get("ultimoMensaje"),
+          "uidReceiver":doc.get("uidReceiver"),
+          "uidSender": doc.get("uidSender"),
         };
         filteredDocs.add(chatRoomdata);
       }
