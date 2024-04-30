@@ -47,6 +47,8 @@ dependencies:
   firebase_storage: ^11.7.4
   video_player: ^2.8.6
   giphy_get: ^3.5.4
+  zego_uikit_prebuilt_call: ^4.8.5
+
 
   
 flutter_native_splash:
