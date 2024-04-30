@@ -54,15 +54,23 @@ class _ConversationWidgetState extends State<ConversationWidget> {
 
     return InkWell(
       onTap: () {
+        // List<String> ids = [currentUserId, receiverId];
+        //ids.sort();
+        //String chatRoomId = ids.join("_");
         Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const ConversationScreen(
-                    uid: "",
-                    nombre: "",
-                    imageURL: "https://via.placeholder.com/52x52",
-                  )),
-        );
+            context,
+            MaterialPageRoute(
+                builder: (context) => widget.currentUid ==
+                        widget.chatRoomdata!['uidReceiver']
+                    ? ConversationScreen(
+                        uid: widget.chatRoomdata!['uidSender'],
+                        nombre: widget.chatRoomdata!['nameSender'],
+                        imageURL: widget.chatRoomdata!['photoURLSender'],
+                      )
+                    : ConversationScreen(
+                        uid: widget.chatRoomdata!['uidReceiver'],
+                        nombre: widget.chatRoomdata!['nameReceiver'],
+                        imageURL: widget.chatRoomdata!['photoURLReceiver'])));
       },
       child: Column(
         children: [
@@ -132,7 +140,8 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                           left: 0,
                           top: 0,
                           child: Text(
-                            widget.currentUid == widget.chatRoomdata!['uidReceiver']
+                            widget.currentUid ==
+                                    widget.chatRoomdata!['uidReceiver']
                                 ? widget.chatRoomdata!["nameSender"]
                                 : widget.chatRoomdata!["nameReceiver"],
                             style: GoogleFonts.poppins(
