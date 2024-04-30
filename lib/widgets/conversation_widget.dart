@@ -54,9 +54,6 @@ class _ConversationWidgetState extends State<ConversationWidget> {
 
     return InkWell(
       onTap: () {
-        // List<String> ids = [currentUserId, receiverId];
-        //ids.sort();
-        //String chatRoomId = ids.join("_");
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -88,8 +85,8 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ImageViewScreen(
-                            nombre: widget.chatRoomdata!['nameReceiver'],
-                            imageURL: widget.chatRoomdata!['photoURLReceiver'],
+                            nombre: widget.chatRoomdata!['nameSender'],
+                            imageURL: widget.chatRoomdata!['photoURLSender'],
                           ),
                         ),
                       );

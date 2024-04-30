@@ -36,7 +36,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final UsersFirestore usersFirestore = UsersFirestore();
   final MessagesFireStore messagesFireStore = MessagesFireStore();
   String userId = FirebaseAuth.instance.currentUser!.uid;
-   String? nameCurrent = FirebaseAuth.instance.currentUser!.displayName;
+  String? nameCurrent = FirebaseAuth.instance.currentUser!.displayName;
   final ScrollController _scrollController = ScrollController();
 
   Future<void> _pickImageFromGallery() async {
@@ -287,13 +287,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 iconSize: 32,
                 tooltip: 'Realizar Videollamada',
                 onPressed: () {
-                  Map<String,dynamic> arguments = {
-                    "currentUid" : userId,
-                    "otherUid" : widget.uid,
+                  Map<String, dynamic> arguments = {
+                    "currentUid": userId,
+                    "otherUid": widget.uid,
                     "nameCurrent": nameCurrent
                   };
-                 // Navigator.pushNamed(context, "/videoCall", arguments: arguments );
-                   Navigator.pushNamed(context, "/videoCall");
+                  print(arguments);
+                  Navigator.pushNamed(context, "/videoCall",
+                      arguments: arguments);
+                  // Navigator.pushNamed(context, "/videoCall");
                 },
               ),
             ),
