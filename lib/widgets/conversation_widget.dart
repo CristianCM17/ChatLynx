@@ -87,9 +87,9 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ImageViewScreen(
-                            nombre: "",
-                            imageURL: "https://via.placeholder.com/52x52",
+                          builder: (context) => ImageViewScreen(
+                            nombre: widget.chatRoomdata!['nameReceiver'],
+                            imageURL: widget.chatRoomdata!['photoURLReceiver'],
                           ),
                         ),
                       );

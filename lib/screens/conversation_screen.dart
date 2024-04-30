@@ -278,15 +278,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ],
         ),
         actions: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(right: 20),
-            child: IconButton(
-              icon: const Icon(Icons.videocam_outlined),
-              iconSize: 32,
-              tooltip: 'Realizar Videollamada',
-              onPressed: () {},
+          if (userId != widget.uid) //Si no estas en tu mismo chat
+            Container(
+              margin: const EdgeInsets.only(right: 20),
+              child: IconButton(
+                icon: const Icon(Icons.videocam_outlined),
+                iconSize: 32,
+                tooltip: 'Realizar Videollamada',
+                onPressed: () {},
+              ),
             ),
-          ),
         ],
       ),
       body: Container(
