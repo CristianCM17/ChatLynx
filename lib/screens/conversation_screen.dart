@@ -10,9 +10,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:giphy_get/giphy_get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String imageURL;
@@ -179,6 +182,49 @@ class _ConversationScreenState extends State<ConversationScreen> {
         FirebaseAuth.instance.currentUser!.photoURL!,
         data,
       );
+      _messageController.clear();
+    }
+  }
+
+  Future<void> _pickGif() async {
+    final GiphyGif? gif = await GiphyGet.getGif(
+      context: context,
+      apiKey: 'ENrCgT8Nc7Jgjgkro9QIDbSJQrYnZZW5',
+    );
+
+    if (gif != null) {
+      final gifUrl = gif.images!.original!.url; // GIF como archivo
+      final response = await http.get(Uri.parse(gifUrl)); // Descargamos GIF
+      final directory = await getTemporaryDirectory(); //Ruta temporal
+      final gifFile = File('${directory.path}/temp.gif');
+      await gifFile.writeAsBytes(response.bodyBytes);
+
+      // Subir gif a firebase
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('gifs/${DateTime.now().millisecondsSinceEpoch}.gif');
+      UploadTask uploadTask = ref.putFile(gifFile);
+      await uploadTask.whenComplete(() => null);
+
+      final uploadedGifUrl = await ref.getDownloadURL();
+
+      Map<String, dynamic> data = {
+        'message': uploadedGifUrl,
+        'hora': DateTime.now(),
+        'receiverId': widget.uid,
+        'senderId': userId,
+        'type': 'gif',
+      };
+      await messagesFireStore.sendMessage(
+        widget.nombre,
+        widget.uid,
+        userId,
+        FirebaseAuth.instance.currentUser!.displayName!,
+        widget.imageURL,
+        FirebaseAuth.instance.currentUser!.photoURL!,
+        data,
+      );
+
       _messageController.clear();
     }
   }
@@ -352,10 +398,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                           CrossAxisAlignment.end,
                                       children: [
                                         if (mensaje['type'] == 'image')
-                                          Image.network(
-                                            mensaje['message'],
-                                            width: 200,
-                                            height: 200,
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ImageViewScreen(
+                                                    imageURL:
+                                                        mensaje['message'],
+                                                    nombre: "",
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Image.network(
+                                              mensaje['message'],
+                                              width: 200,
+                                              height: 200,
+                                            ),
                                           ),
                                         if (mensaje['type'] == 'video')
                                           Container(
@@ -374,8 +435,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                               ),
                                             ),
                                           ),
+                                        if (mensaje['type'] == 'gif')
+                                          Image.network(
+                                            mensaje['message'],
+                                            width: 200,
+                                            height: 200,
+                                          ),
                                         if (mensaje['type'] != 'image' &&
-                                            mensaje['type'] != 'video')
+                                            mensaje['type'] != 'video' &&
+                                            mensaje['type'] != 'gif')
                                           SelectableText(
                                             mensaje[
                                                 'message'], // El texto del mensaje
@@ -481,6 +549,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                           onTap: () {
                                             print('Añadir gif');
                                             Navigator.pop(context);
+                                            _pickGif();
                                           },
                                         ),
                                       ),

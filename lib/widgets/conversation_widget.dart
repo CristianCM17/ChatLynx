@@ -37,7 +37,7 @@ class _ConversationWidgetState extends State<ConversationWidget> {
       formattedDate = DateFormat('HH:mm a').format(dateTime);
     }
 
-    // Verificacion de URL
+    // Verificacion de URL´s
     String ultimoMensaje = widget.chatRoomdata!['ultimoMensaje'];
     if (ultimoMensaje.startsWith(
         'https://firebasestorage.googleapis.com/v0/b/chat-82a68.appspot.com/o/images')) {
@@ -45,6 +45,9 @@ class _ConversationWidgetState extends State<ConversationWidget> {
     } else if (ultimoMensaje.startsWith(
         'https://firebasestorage.googleapis.com/v0/b/chat-82a68.appspot.com/o/videos')) {
       ultimoMensaje = '📽️ Video';
+    } else if (ultimoMensaje.startsWith(
+        'https://firebasestorage.googleapis.com/v0/b/chat-82a68.appspot.com/o/gifs')) {
+      ultimoMensaje = '🐆 GIF';
     }
 
     return InkWell(
