@@ -32,7 +32,7 @@ class _CallScreenState extends State<CallScreen> {
         appSign:
             "a493ad68d54dab428ef205bfb4ea2518c4424e109d54820c0d559d1d0e14cc55",
         callID: callId,
-        userID: "user_$userID",
+        userID: userID,
         userName: name,
         config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall());
   }
