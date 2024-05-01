@@ -424,16 +424,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                 ),
                                               );
                                             },
-                                            child: Image.network(
-                                              mensaje['message'],
-                                              width: 200,
-                                              height: 200,
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 5),
+                                              child: Image.network(
+                                                mensaje['message'],
+                                                width: 200,
+                                                height: 200,
+                                              ),
                                             ),
                                           ),
                                         if (mensaje['type'] == 'video')
                                           Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                vertical: 1, horizontal: 8),
+                                            margin: const EdgeInsets.only(
+                                                bottom: 5, left: 8, right: 8),
                                             child: Align(
                                               alignment: isCurrentUser
                                                   ? Alignment.centerRight
@@ -448,10 +452,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                             ),
                                           ),
                                         if (mensaje['type'] == 'gif')
-                                          Image.network(
-                                            mensaje['message'],
-                                            width: 200,
-                                            height: 200,
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                                bottom: 5),
+                                            child: Image.network(
+                                              mensaje['message'],
+                                              width: 200,
+                                              height: 200,
+                                            ),
                                           ),
                                         if (mensaje['type'] != 'image' &&
                                             mensaje['type'] != 'video' &&
