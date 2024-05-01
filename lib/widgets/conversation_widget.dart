@@ -84,10 +84,18 @@ class _ConversationWidgetState extends State<ConversationWidget> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ImageViewScreen(
-                            nombre: widget.chatRoomdata!['nameSender'],
-                            imageURL: widget.chatRoomdata!['photoURLSender'],
-                          ),
+                          builder: (context) => widget.currentUid ==
+                                  widget.chatRoomdata!['uidReceiver']
+                              ? ImageViewScreen(
+                                  nombre: widget.chatRoomdata!['nameSender'],
+                                  imageURL:
+                                      widget.chatRoomdata!['photoURLSender'],
+                                )
+                              : ImageViewScreen(
+                                  nombre: widget.chatRoomdata!['nameReceiver'],
+                                  imageURL:
+                                      widget.chatRoomdata!['photoURLReceiver'],
+                                ),
                         ),
                       );
                     },
