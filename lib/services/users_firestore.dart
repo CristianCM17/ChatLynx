@@ -91,24 +91,33 @@ class UsersFirestore {
     return contactosCollection.snapshots();
   }
 
-  Future<List<String>> obtenerContactosDisponibles(String userId) async {
-    try {
-      // Obtener referencia
-      String? userIdEncontrado = await encontrarUserIdPorUid(userId);
-      DocumentReference userDocRef = usersCollection.doc(userIdEncontrado);
+  Future<List<Map<String, String>>> obtenerContactosDisponibles(String userId) async {
+  try {
+    // Obtener referencia
+    String? userIdEncontrado = await encontrarUserIdPorUid(userId);
+    DocumentReference userDocRef = usersCollection.doc(userIdEncontrado);
 
-      CollectionReference contactosCollection =
-          usersCollection.doc(userIdEncontrado).collection('contactos');
-      QuerySnapshot snapshot = await contactosCollection.get();
+    CollectionReference contactosCollection =
+        usersCollection.doc(userIdEncontrado).collection('contactos');
+    QuerySnapshot snapshot = await contactosCollection.get();
 
-      List<String> availableContacts = [];
-      snapshot.docs.forEach((doc) {
-        availableContacts.add(doc['nombre']);
-      });
-      return availableContacts;
-    } catch (error) {
-      print('Error al obtener contactos disponibles: $error');
-      return [];
-    }
+    List<Map<String, String>> availableContacts = [];
+    snapshot.docs.forEach((doc) {
+      
+      Map<String, String> contactData = {
+        'nombre': doc['nombre'],
+        'uid': doc['uid'], 
+        'email': doc['email'],
+        'photoURL': doc['photoURL'],
+      };
+      availableContacts.add(contactData);
+    });
+     print('the available contacts $availableContacts');
+    return availableContacts;
+   
+  } catch (error) {
+    print('Error al obtener contactos disponibles: $error');
+    return [];
   }
+}
 }

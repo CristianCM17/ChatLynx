@@ -16,8 +16,8 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final UsersFirestore usersFirestore = UsersFirestore();
   final UsersFirestore _usersFirestore = UsersFirestore();
-  List<String> _availableContacts = [];
-  List<String> _selectedContacts = [];
+  List<Map<String,dynamic>> _availableContacts = [];
+  final List<Map<String,dynamic>> _selectedContacts = [];
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
   void _loadAvailableContacts() async {
     String userIdCurrent = FirebaseAuth.instance.currentUser!.uid;
     String? userId = userIdCurrent;
-    List<String> contacts =
+    List<Map<String,dynamic>> contacts =
         await _usersFirestore.obtenerContactosDisponibles(userId);
     setState(() {
       _availableContacts = contacts;
@@ -161,17 +161,17 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                             return CheckboxListTile(
                               // Item
                               title: Text(
-                                contact,
+                                contact['nombre'],
                                 style: GoogleFonts.poppins(
                                     color: Colors.white, fontSize: 14),
                               ),
-                              value: _selectedContacts.contains(contact),
+                              value: _selectedContacts.contains(contact['nombre']),
                               onChanged: (bool? value) {
                                 setState(() {
                                   if (value == true) {
-                                    _selectedContacts.add(contact);
+                                    _selectedContacts.add(contact['nombre']);
                                   } else {
-                                    _selectedContacts.remove(contact);
+                                    _selectedContacts.remove(contact['nombre']);
                                   }
                                 });
                               },
