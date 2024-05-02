@@ -165,13 +165,13 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                                 style: GoogleFonts.poppins(
                                     color: Colors.white, fontSize: 14),
                               ),
-                              value: _selectedContacts.contains(contact['nombre']),
+                              value: _selectedContacts.any((selectedContact) => selectedContact['nombre'] == contact['nombre']),
                               onChanged: (bool? value) {
                                 setState(() {
                                   if (value == true) {
-                                    _selectedContacts.add(contact['nombre']);
+                                    _selectedContacts.add(contact);
                                   } else {
-                                    _selectedContacts.remove(contact['nombre']);
+                                    _selectedContacts.remove(contact);
                                   }
                                 });
                               },
