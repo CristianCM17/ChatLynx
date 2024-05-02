@@ -90,4 +90,25 @@ class UsersFirestore {
         usersCollection.doc(userId).collection('contactos');
     return contactosCollection.snapshots();
   }
+
+  Future<List<String>> obtenerContactosDisponibles(String userId) async {
+    try {
+      // Obtener referencia
+      String? userIdEncontrado = await encontrarUserIdPorUid(userId);
+      DocumentReference userDocRef = usersCollection.doc(userIdEncontrado);
+
+      CollectionReference contactosCollection =
+          usersCollection.doc(userIdEncontrado).collection('contactos');
+      QuerySnapshot snapshot = await contactosCollection.get();
+
+      List<String> availableContacts = [];
+      snapshot.docs.forEach((doc) {
+        availableContacts.add(doc['nombre']);
+      });
+      return availableContacts;
+    } catch (error) {
+      print('Error al obtener contactos disponibles: $error');
+      return [];
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:chatlynx/screens/add_contact_screen.dart';
+import 'package:chatlynx/screens/add_group_screen.dart';
 import 'package:chatlynx/screens/call_screen.dart';
 import 'package:chatlynx/screens/conversation_screen.dart';
 import 'package:chatlynx/screens/home_screen.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         "/searchConversation": (BuildContext context) =>
             const SearchConversation(),
         "/addContact": (BuildContext context) => const AddContactScreen(),
+        "/addGroup": (BuildContext context) => const AddGroupScreen(),
         "/videoCall": (BuildContext context) => const CallScreen(),
       },
     );

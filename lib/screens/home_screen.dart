@@ -59,7 +59,8 @@ class _HomePageState extends State<HomePage> {
           return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              return ConversationWidget(chatRoomdata: snapshot.data![index],currentUid:currentUid);
+              return ConversationWidget(
+                  chatRoomdata: snapshot.data![index], currentUid: currentUid);
             },
           );
         } else {
@@ -151,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                 _selectedIndex == 0
                     ? "ChatLynx"
                     : _selectedIndex == 1
-                        ? "Videollamadas"
+                        ? "Grupos"
                         : "Contactos",
                 style: GoogleFonts.poppins(
                     fontSize: 26, fontWeight: FontWeight.w300),
@@ -216,9 +217,9 @@ class _HomePageState extends State<HomePage> {
               label: 'Mensajes',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.video_camera_front_outlined),
-              activeIcon: Icon(Icons.video_camera_front),
-              label: 'Videollamadas',
+              icon: Icon(Icons.groups_2_outlined),
+              activeIcon: Icon(Icons.groups_2),
+              label: 'Grupos',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.contacts_outlined),
@@ -244,6 +245,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       //Añadimos btn a zona de contactos
+      //Añadimos btn a zona de contactos
       floatingActionButton: _selectedIndex == 2
           ? FloatingActionButton(
               backgroundColor: Colors.green[500],
@@ -251,15 +253,30 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(context, "/addContact",
                     arguments: googleListInfo);
               },
-              child: Icon(
-                Icons.person_add,
-                size: 32,
-              ),
               elevation: 4,
               tooltip: 'Agregar contacto nuevo',
               splashColor: Colors.green[300],
+              child: const Icon(
+                Icons.person_add,
+                size: 32,
+              ),
             )
-          : null,
+          : _selectedIndex == 1
+              ? FloatingActionButton(
+                  backgroundColor: Colors.green[500],
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/addGroup",
+                        arguments: googleListInfo);
+                  },
+                  elevation: 4,
+                  tooltip: 'Agregar grupo nuevo',
+                  splashColor: Colors.green[300],
+                  child: const Icon(
+                    Icons.library_add,
+                    size: 32,
+                  ),
+                )
+              : null,
     );
   }
 }
