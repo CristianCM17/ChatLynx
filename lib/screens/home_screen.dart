@@ -53,11 +53,24 @@ class _HomePageState extends State<HomePage> {
         } else if (snapshot.hasError) {
           return const Text("Error al obtener datos");
         } else if (snapshot.hasData) {
+          List<Map<String, dynamic>> chatRooms = // Obtenemos lista
+              snapshot.data as List<Map<String, dynamic>>;
+          compareByLastUpdate(a, b) {
+            Timestamp timestampA = a['ultimaActualizacion'];
+            Timestamp timestampB = b['ultimaActualizacion'];
+            DateTime dateTimeA = timestampA.toDate();
+            DateTime dateTimeB = timestampB.toDate();
+            return dateTimeB.compareTo(dateTimeA);
+          }
+
+          //Ordenamos
+          chatRooms.sort(compareByLastUpdate);
+
           return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               return ConversationWidget(
-                  chatRoomdata: snapshot.data![index], currentUid: currentUid);
+                  chatRoomdata: chatRooms[index], currentUid: currentUid);
             },
           );
         } else {

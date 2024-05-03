@@ -23,20 +23,16 @@ class _ConversationWidgetState extends State<ConversationWidget> {
     var size = MediaQuery.of(context).size;
 
     Timestamp timestamp = widget.chatRoomdata!['ultimaActualizacion'];
-    DateTime dateTime = timestamp.toDate();
     DateTime now = DateTime.now();
+    DateTime dateTime = timestamp.toDate();
     String formattedDate;
 
-    if (dateTime.year == now.year && // Verificamos fecha ayer
-        dateTime.month == now.month &&
-        dateTime.day == now.day - 1) {
+    if (dateTime.isAfter(now.subtract(const Duration(days: 1)))) {
+      formattedDate = 'Hoy, ${DateFormat('HH:mm a').format(dateTime)}';
+    } else if (dateTime.isAfter(now.subtract(const Duration(days: 2)))) {
       formattedDate = 'Ayer, ${DateFormat('HH:mm a').format(dateTime)}';
-    } else if (dateTime.year == now.year && // Si han pasado más de un día
-        dateTime.month == now.month &&
-        dateTime.day < now.day - 1) {
-      formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
     } else {
-      formattedDate = DateFormat('HH:mm a').format(dateTime);
+      formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
     }
 
     // Verificacion de URL´s
