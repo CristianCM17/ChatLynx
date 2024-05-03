@@ -30,12 +30,13 @@ class _HomePageState extends State<HomePage> {
       //MENSAJES
       buildConversationHistory(currentUid),
       //VIDEOLLAMADAS
-      buildGroupList(),
+      buildGroupList(currentUid),
       //CONTACTOS
       buildConversationStreamBuilder(currentUid), // Movido aquí
     ];
   }
-  Widget buildGroupList() {
+
+  Widget buildGroupList(currentUid) {
     return StreamBuilder(
         stream: groups.getGroups(),
         builder: (context, snapshot) {
@@ -44,14 +45,35 @@ class _HomePageState extends State<HomePage> {
           } else if (snapshot.hasError) {
             return const Text("Error al obtener datos");
           } else if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                return GroupsWidget(groupData: snapshot.data!.docs[index]);
-              },
-            );
-          }else{
-              return const Text("No hay datos disponibles");
+            if (snapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Text(
+                  "No tienes grupos aún",
+                  style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+              );
+            } else {
+              return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  Map<String, dynamic> groupData =
+                      snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                  List<dynamic> members = groupData['members'];
+                  // Verificamos si es admin
+                  if (groupData['admin'] == currentUid ||
+                      members.any((member) => member['uid'] == currentUid)) {
+                    return GroupsWidget(groupData: snapshot.data!.docs[index]);
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
+              );
+            }
+          } else {
+            return const Text("No hay datos disponibles");
           }
         });
   }
