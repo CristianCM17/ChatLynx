@@ -4,14 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 class GroupsFirestore {
   String userId = FirebaseAuth.instance.currentUser!.uid; 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  CollectionReference get chatRoomsCollection =>
+  CollectionReference get groupsCollection =>
       _firestore.collection('groups');
 
   
  Future<void> createGroup(List<Map<String, dynamic>> contactos, String groupName) async {
   try {
     
-    DocumentReference newGroupDocRef = await chatRoomsCollection.add({
+    DocumentReference newGroupDocRef = await groupsCollection.add({
       'admin': userId, 
       'groupId': '',
       'groupName': groupName,
@@ -28,6 +28,10 @@ class GroupsFirestore {
   } catch (error) {
     print('Error al crear el grupo: $error');
   }
+}
+
+Stream<QuerySnapshot> getGroups() {
+  return groupsCollection.snapshots();
 }
 
 Future<void> insertUsersWithGroupId(String groupId, List<Map<String, dynamic>> contactos) async {

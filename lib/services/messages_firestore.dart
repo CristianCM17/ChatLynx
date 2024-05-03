@@ -86,7 +86,6 @@ class MessagesFireStore {
         filteredDocs.add(chatRoomdata);
       }
     });
-    print(filteredDocs);
     return filteredDocs;
   }
 }

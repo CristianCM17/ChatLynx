@@ -1,4 +1,5 @@
 import 'package:chatlynx/services/google_auth_firebase.dart';
+import 'package:chatlynx/services/groups_firestore.dart';
 import 'package:chatlynx/services/messages_firestore.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:chatlynx/widgets/groups_widget.dart';
@@ -22,26 +23,37 @@ class _HomePageState extends State<HomePage> {
   final GoogleAuthFirebase authGoogle = GoogleAuthFirebase();
   final UsersFirestore usersFirestore = UsersFirestore();
   final MessagesFireStore messagesFirestore = MessagesFireStore();
-  late List<Widget>
-      _widgetOptions; // Definir la lista sin inicializarla directamente
+  final GroupsFirestore groups = GroupsFirestore();
 
   List<Widget> _buildWidgetOptions(currentUid) {
     return <Widget>[
       //MENSAJES
       buildConversationHistory(currentUid),
       //VIDEOLLAMADAS
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            GroupsWidget(),
-            GroupsWidget(),
-            GroupsWidget(),
-          ],
-        ),
-      ),
+      buildGroupList(),
       //CONTACTOS
       buildConversationStreamBuilder(currentUid), // Movido aquí
     ];
+  }
+  Widget buildGroupList() {
+    return StreamBuilder(
+        stream: groups.getGroups(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Text("Error al obtener datos");
+          } else if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                return GroupsWidget(groupData: snapshot.data!.docs[index]);
+              },
+            );
+          }else{
+              return const Text("No hay datos disponibles");
+          }
+        });
   }
 
   Widget buildConversationHistory(currentUid) {

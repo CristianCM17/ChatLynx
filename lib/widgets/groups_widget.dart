@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class GroupsWidget extends StatefulWidget {
-  final QueryDocumentSnapshot? usersData;
+  final QueryDocumentSnapshot? groupData;
 
-  const GroupsWidget({super.key, this.usersData});
+  const GroupsWidget({super.key,this.groupData});
 
   @override
   State<GroupsWidget> createState() => _GroupsWidgetState();
@@ -68,7 +68,7 @@ class _GroupsWidgetState extends State<GroupsWidget> {
                   left: 64,
                   top: 25,
                   child: Text(
-                    'Nombre',
+                    widget.groupData!["groupName"],
                     style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontSize: 13,
