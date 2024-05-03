@@ -1,3 +1,4 @@
+import 'package:chatlynx/services/groups_firestore.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
   final UsersFirestore _usersFirestore = UsersFirestore();
   List<Map<String,dynamic>> _availableContacts = [];
   final List<Map<String,dynamic>> _selectedContacts = [];
+  GroupsFirestore groupsFirestore = GroupsFirestore();
 
   @override
   void initState() {
@@ -205,7 +207,8 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            FocusScope.of(context).unfocus();
+                            groupsFirestore.createGroup(_selectedContacts, _groupNameController.text).then((_) {
+                                FocusScope.of(context).unfocus();
                             var snackbar = SnackBar(
                               content: Text(
                                 'Grupo creado: ${_groupNameController.text}',
@@ -221,6 +224,8 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(snackbar);
                             _groupNameController.clear();
+                            }
+                            );
                           }
                         },
                         style: const ButtonStyle(
