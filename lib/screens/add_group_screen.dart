@@ -146,7 +146,7 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                                 Text(
                                   'Selecciona los contactos',
                                   style: GoogleFonts.poppins(
-                                      color: Colors.white, fontSize: 18),
+                                      color: Colors.white, fontSize: 14),
                                 ),
                               ],
                             ),

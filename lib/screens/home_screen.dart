@@ -207,15 +207,8 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(40)),
                   color: Colors.white.withOpacity(0.2),
+                  image: const DecorationImage(image: AssetImage("assets/tecelaya.png"))
                 ),
-                child: IconButton(
-                    icon: const Icon(
-                      Icons.search,
-                      size: 32,
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/searchConversation");
-                    }),
               ),
               actions: [
                 InkWell(

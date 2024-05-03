@@ -328,7 +328,7 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
                                 Text(
                                   'Selecciona los contactos',
                                   style: GoogleFonts.poppins(
-                                      color: Colors.black, fontSize: 12),
+                                      color: Colors.black, fontSize: 10),
                                 ),
                               ],
                             ),
