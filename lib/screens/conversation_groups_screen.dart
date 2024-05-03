@@ -525,6 +525,28 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
                                 DateFormat('dd/MM/yyyy').format(dateTime);
                           }
 
+                          String senderFullName = mensaje['senderUserName'];
+                          int lastSpaceIndex = senderFullName.lastIndexOf(' ');
+                          String firstName = '';
+                          String lastName = '';
+
+                          if (lastSpaceIndex != -1) {
+                            firstName =
+                                senderFullName.substring(0, lastSpaceIndex);
+                            lastName =
+                                senderFullName.substring(lastSpaceIndex + 1);
+                          } else {
+                            firstName = senderFullName;
+                          }
+                          //Limitamos a 15 caract
+                          if (firstName.length > 15) {
+                            firstName = firstName.substring(0, 15) + '...';
+                          }
+                          if (lastName.length > 15) {
+                            lastName = lastName.substring(0, 15) + '...';
+                          }
+                          String formattedSenderName = '$lastName $firstName ';
+
                           return Container(
                             margin: const EdgeInsets.symmetric(
                                 vertical: 1, horizontal: 8),
@@ -557,9 +579,20 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
                                       ),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
+                                      crossAxisAlignment: isCurrentUser
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
                                       children: [
+                                        Text(
+                                          isCurrentUser
+                                              ? 'TÚ'
+                                              : formattedSenderName,
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.grey,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        //Tipos de msj
                                         if (mensaje['type'] == 'image')
                                           InkWell(
                                             onTap: () {
@@ -624,24 +657,28 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
                                                   : Colors.black,
                                             ),
                                           ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              formattedDate,
-                                              style: GoogleFonts.poppins(
-                                                color: Colors.grey,
-                                                fontSize: 13,
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 5.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                formattedDate,
+                                                style: GoogleFonts.poppins(
+                                                  color: Colors.grey,
+                                                  fontSize: 13,
+                                                ),
                                               ),
-                                            ),
-                                            // const SizedBox(width: 4.0),
-                                            // const Icon(
-                                            //   Icons.done_all,
-                                            //   color: Colors.blue,
-                                            //   size: 16.0,
-                                            // ),
-                                          ],
+                                              // const SizedBox(width: 4.0),
+                                              // const Icon(
+                                              //   Icons.done_all,
+                                              //   color: Colors.blue,
+                                              //   size: 16.0,
+                                              // ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
