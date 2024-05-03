@@ -82,6 +82,16 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
       String imageUrl = await ref.getDownloadURL();
       print('URL de la imagen subida: $imageUrl');
 
+      Map<String, dynamic> data = {
+        'message': imageUrl,
+        'senderUserName': nameCurrent,
+        'hora': DateTime.now(),
+        'senderId': userId,
+        'type': 'image'
+      };
+
+      await groups.sendMessage(widget.groupData!["groupId"], data);
+
       _messageController.clear();
     }
   }
@@ -103,6 +113,16 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
       String videoUrl = await ref.getDownloadURL();
       print('URL del video subido: $videoUrl');
 
+      Map<String, dynamic> data = {
+        'message': videoUrl,
+        'senderUserName': nameCurrent,
+        'hora': DateTime.now(),
+        'senderId': userId,
+        'type': 'video'
+      };
+
+      await groups.sendMessage(widget.groupData!["groupId"], data);
+
       _messageController.clear();
     }
   }
@@ -123,6 +143,16 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
 
       String videoUrl = await ref.getDownloadURL();
       print('URL del video subido: $videoUrl');
+
+      Map<String, dynamic> data = {
+        'message': videoUrl,
+        'senderUserName': nameCurrent,
+        'hora': DateTime.now(),
+        'senderId': userId,
+        'type': 'video'
+      };
+
+      await groups.sendMessage(widget.groupData!["groupId"], data);
 
       _messageController.clear();
     }
@@ -149,6 +179,16 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
       await uploadTask.whenComplete(() => null);
 
       final uploadedGifUrl = await ref.getDownloadURL();
+
+      Map<String, dynamic> data = {
+        'message': uploadedGifUrl,
+        'senderUserName': nameCurrent,
+        'hora': DateTime.now(),
+        'senderId': userId,
+        'type': 'gif'
+      };
+
+      await groups.sendMessage(widget.groupData!["groupId"], data);
 
       _messageController.clear();
     }
