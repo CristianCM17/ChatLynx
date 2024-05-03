@@ -1,7 +1,7 @@
 import 'package:chatlynx/services/google_auth_firebase.dart';
 import 'package:chatlynx/services/messages_firestore.dart';
 import 'package:chatlynx/services/users_firestore.dart';
-import 'package:chatlynx/widgets/calls_widget.dart';
+import 'package:chatlynx/widgets/groups_widget.dart';
 import 'package:chatlynx/widgets/contact_widget.dart';
 import 'package:chatlynx/widgets/conversation_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -33,12 +33,9 @@ class _HomePageState extends State<HomePage> {
       SingleChildScrollView(
         child: Column(
           children: [
-            CallsWidget(),
-            CallsWidget(),
-            CallsWidget(),
-            CallsWidget(),
-            CallsWidget(),
-            CallsWidget(),
+            GroupsWidget(),
+            GroupsWidget(),
+            GroupsWidget(),
           ],
         ),
       ),
