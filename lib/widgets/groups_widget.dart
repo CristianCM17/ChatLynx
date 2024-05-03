@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 class GroupsWidget extends StatefulWidget {
   final QueryDocumentSnapshot? groupData;
 
-  const GroupsWidget({super.key,this.groupData});
+  const GroupsWidget({super.key, this.groupData});
 
   @override
   State<GroupsWidget> createState() => _GroupsWidgetState();
@@ -22,7 +22,10 @@ class _GroupsWidgetState extends State<GroupsWidget> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ConversationGroupsScreen(groupData: widget.groupData)),
+          MaterialPageRoute(
+              builder: (context) => ConversationGroupsScreen(
+                    groupData: widget.groupData,
+                  )),
         );
       },
       child: Column(
@@ -41,7 +44,7 @@ class _GroupsWidgetState extends State<GroupsWidget> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ImageViewScreen(
-                            nombre: '',
+                            nombre: widget.groupData!.get("groupName"),
                             imageURL:
                                 'https://t4.ftcdn.net/jpg/03/78/40/51/360_F_378405187_PyVLw51NVo3KltNlhUOpKfULdkUOUn7j.jpg',
                           ),

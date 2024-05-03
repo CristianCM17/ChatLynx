@@ -19,6 +19,7 @@ import 'package:path_provider/path_provider.dart';
 
 class ConversationGroupsScreen extends StatefulWidget {
   final QueryDocumentSnapshot? groupData;
+
   const ConversationGroupsScreen({super.key, this.groupData});
 
   @override
@@ -34,6 +35,28 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
   String? nameCurrent = FirebaseAuth.instance.currentUser!.displayName;
   final ScrollController _scrollController = ScrollController();
   GroupsFirestore groups = GroupsFirestore();
+  List<Map<String, dynamic>> _availableContacts = [];
+  final List<Map<String, dynamic>> _selectedContacts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAvailableContacts();
+  }
+
+  void _loadAvailableContacts() async {
+    String userIdCurrent = FirebaseAuth.instance.currentUser!.uid;
+    List<Map<String, dynamic>> allContacts =
+        await usersFirestore.obtenerContactosDisponibles(userIdCurrent);
+    List<dynamic> members = widget.groupData!["members"];
+    List memberEmails = members.map((member) => member['email']).toList();
+
+    setState(() {
+      _availableContacts = allContacts
+          .where((contact) => !memberEmails.contains(contact['email']))
+          .toList();
+    });
+  }
 
   Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
@@ -210,7 +233,7 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ImageViewScreen(
-                      nombre: '',
+                      nombre: widget.groupData!["groupName"],
                       imageURL:
                           'https://t4.ftcdn.net/jpg/03/78/40/51/360_F_378405187_PyVLw51NVo3KltNlhUOpKfULdkUOUn7j.jpg',
                     ),
@@ -243,18 +266,159 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
             onSelected: (String value) {
               if (value == 'ver_miembros') {
                 showModalBottomSheet(
+                  backgroundColor: Colors.grey[700],
                   context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
+                  ),
                   builder: (BuildContext context) {
                     return Container(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.3,
+                      ),
                       child: ListView.builder(
-                        // itemCount: _miembros.length,
-                        itemCount: 3,
+                        itemCount: widget.groupData?["members"].length,
                         itemBuilder: (context, index) {
+                          String memberName =
+                              widget.groupData?["members"][index]['nombre'];
                           return ListTile(
-                            // title: Text(_miembros[index]),
-                            title: Text('Miembro'),
+                            title: Text(memberName,
+                                style:
+                                    GoogleFonts.poppins(color: Colors.white)),
+                            subtitle: Text(
+                              widget.groupData?["members"][index]['email'],
+                              style: GoogleFonts.poppins(color: Colors.white54),
+                            ),
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(widget
+                                  .groupData?["members"][index]['photoURL']),
+                            ),
                           );
                         },
+                      ),
+                    );
+                  },
+                );
+              }
+              if (value == 'add_miembros') {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      contentPadding: const EdgeInsets.all(9),
+                      content: ExpansionTile(
+                        // Lista desplegable
+                        collapsedIconColor: Colors.black,
+                        iconColor: Colors.black,
+                        collapsedShape:
+                            const RoundedRectangleBorder(side: BorderSide.none),
+                        shape:
+                            const RoundedRectangleBorder(side: BorderSide.none),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.contacts, color: Colors.black),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Selecciona los contactos',
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black, fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 15),
+                            Text(
+                              '${_availableContacts.length} disponibles', // Contador select contacts
+                              style: GoogleFonts.poppins(
+                                  color: Colors.black, fontSize: 13),
+                            ),
+                          ],
+                        ),
+                        children: [
+                          ..._availableContacts.map((contact) {
+                            return CheckboxListTile(
+                              // Item
+                              title: Text(
+                                contact['nombre'],
+                                style: GoogleFonts.poppins(
+                                    color: Colors.black, fontSize: 13),
+                              ),
+                              value: _selectedContacts.any((selectedContact) =>
+                                  selectedContact['nombre'] ==
+                                  contact['nombre']),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  if (value == true) {
+                                    _selectedContacts.add(contact);
+                                  } else {
+                                    _selectedContacts.remove(contact);
+                                  }
+                                });
+                              },
+                            );
+                          }).toList(),
+                          ListTile(
+                            title: Text(
+                              _selectedContacts.length ==
+                                      _availableContacts.length
+                                  ? 'Deseleccionar todos'
+                                  : 'Seleccionar todos',
+                              textAlign: TextAlign.end,
+                              style: GoogleFonts.poppins(
+                                  color: Colors.black, fontSize: 13),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                if (_selectedContacts.length ==
+                                    _availableContacts.length) {
+                                  _selectedContacts.clear();
+                                } else {
+                                  _selectedContacts.clear();
+                                  _selectedContacts.addAll(_availableContacts);
+                                }
+                              });
+                            },
+                          ),
+                          ElevatedButton(
+                            onPressed: _selectedContacts.isNotEmpty
+                                ? () {
+                                    String groupId =
+                                        widget.groupData!["groupId"];
+                                    GroupsFirestore()
+                                        .addUserToGroup(
+                                            groupId, _selectedContacts)
+                                        .then((_) {
+                                      Navigator.pop(context);
+                                      var snackbar = SnackBar(
+                                        content: Text(
+                                          'Añadido correctamente',
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: Colors.white),
+                                        ),
+                                        duration: const Duration(seconds: 3),
+                                        backgroundColor: Colors.green,
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: const EdgeInsets.only(
+                                            bottom: 50, left: 20, right: 20),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackbar);
+                                    });
+                                  }
+                                : null,
+                            child: Text(
+                              'Añadir al chat',
+                              style: GoogleFonts.poppins(fontSize: 14),
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -275,7 +439,19 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
                   ),
                 ),
               ),
-              //
+              PopupMenuItem<String>(
+                value: 'add_miembros',
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.person_add_alt_1_sharp,
+                    color: Colors.white,
+                  ),
+                  title: Text(
+                    'Agregar miembros',
+                    style: GoogleFonts.poppins(color: Colors.white),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
