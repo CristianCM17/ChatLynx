@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chatlynx/screens/image_view_screen.dart';
 import 'package:chatlynx/screens/video_player_screen.dart';
+import 'package:chatlynx/services/groups_firestore.dart';
 import 'package:chatlynx/services/messages_firestore.dart';
 import 'package:chatlynx/services/users_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,7 +18,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class ConversationGroupsScreen extends StatefulWidget {
-  const ConversationGroupsScreen({super.key});
+  final QueryDocumentSnapshot? groupData;
+  const ConversationGroupsScreen({super.key, this.groupData});
 
   @override
   State<ConversationGroupsScreen> createState() =>
@@ -31,6 +33,7 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
   String userId = FirebaseAuth.instance.currentUser!.uid;
   String? nameCurrent = FirebaseAuth.instance.currentUser!.displayName;
   final ScrollController _scrollController = ScrollController();
+  GroupsFirestore groups = GroupsFirestore();
 
   Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
@@ -49,6 +52,15 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
       String imageUrl = await ref.getDownloadURL();
       print('URL de la imagen subida: $imageUrl');
 
+      Map<String, dynamic> data = {
+        'message': imageUrl,
+        'senderUserName': nameCurrent,
+        'hora': DateTime.now(),
+        'senderId': userId,
+        'type': 'image'
+      };
+
+      await groups.sendMessage(widget.groupData!["groupId"], data);
       _messageController.clear();
     }
   }
@@ -176,7 +188,7 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
             ),
             Expanded(
               child: Text(
-                "Nombre de group",
+                widget.groupData!["groupName"],
                 overflow: TextOverflow.fade,
                 style: GoogleFonts.poppins(
                     fontSize: 14, fontWeight: FontWeight.w300),
@@ -243,11 +255,192 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
         child: Column(
           children: [
             Expanded(
-                child: Center(
-                    child: Text(
-              "Mensajes de grupo",
-              style: GoogleFonts.poppins(color: Colors.white),
-            ))),
+                child: StreamBuilder(
+              stream: groups.getMessages(widget.groupData!["groupId"]),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  if (snapshot.hasError) {
+                    return const Text('Error al cargar los mensajes');
+                  } else {
+                    if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+                      return Center(
+                        child: Text(
+                          'No hay mensajes aún',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    } else {
+                      Future.delayed(Duration(microseconds: 0)).then((_) {
+                        _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeOut,
+                        );
+                      });
+                      return ListView.builder(
+                        controller: _scrollController,
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          var mensaje = snapshot.data!.docs[index];
+                          String senderId = mensaje['senderId'];
+                          bool isCurrentUser = senderId == userId;
+
+                          //Convertimos fecha
+                          Timestamp timestamp = mensaje['hora'];
+                          DateTime dateTime = timestamp.toDate();
+                          DateTime now = DateTime.now();
+                          String formattedDate;
+                          if (dateTime
+                              .isAfter(now.subtract(const Duration(days: 1)))) {
+                            formattedDate =
+                                DateFormat('HH:mm a').format(dateTime);
+                          } else if (dateTime
+                              .isAfter(now.subtract(const Duration(days: 2)))) {
+                            formattedDate =
+                                'Ayer, ${DateFormat('HH:mm a').format(dateTime)}';
+                          } else {
+                            formattedDate =
+                                DateFormat('dd/MM/yyyy').format(dateTime);
+                          }
+
+                          return Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 1, horizontal: 8),
+                            child: Align(
+                              alignment: isCurrentUser
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: ConstrainedBox(
+                                //Para cuando el msj es muy largo
+                                constraints: BoxConstraints(
+                                  maxWidth: size.width * 0.75,
+                                ),
+                                child: IntrinsicWidth(
+                                  //Ajuste al msj dinamicamente
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0, vertical: 8.0),
+                                    decoration: BoxDecoration(
+                                      color: isCurrentUser
+                                          ? Colors.grey.shade800
+                                          : const Color.fromRGBO(
+                                              242, 247, 251, 1),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(
+                                            isCurrentUser ? 16.0 : 0.0),
+                                        topRight: Radius.circular(16.0),
+                                        bottomLeft: Radius.circular(16.0),
+                                        bottomRight: Radius.circular(
+                                            isCurrentUser ? 0.0 : 16.0),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        if (mensaje['type'] == 'image')
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ImageViewScreen(
+                                                    imageURL:
+                                                        mensaje['message'],
+                                                    nombre: "",
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 5),
+                                              child: Image.network(
+                                                mensaje['message'],
+                                                width: 200,
+                                                height: 200,
+                                              ),
+                                            ),
+                                          ),
+                                        if (mensaje['type'] == 'video')
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                                bottom: 5, left: 8, right: 8),
+                                            child: Align(
+                                              alignment: isCurrentUser
+                                                  ? Alignment.centerRight
+                                                  : Alignment.centerLeft,
+                                              child: SizedBox(
+                                                width: size.width * 0.75,
+                                                height: 200,
+                                                child: VideoPlayerScreen(
+                                                    videoUrl:
+                                                        mensaje['message']),
+                                              ),
+                                            ),
+                                          ),
+                                        if (mensaje['type'] == 'gif')
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                                bottom: 5),
+                                            child: Image.network(
+                                              mensaje['message'],
+                                              width: 200,
+                                              height: 200,
+                                            ),
+                                          ),
+                                        if (mensaje['type'] != 'image' &&
+                                            mensaje['type'] != 'video' &&
+                                            mensaje['type'] != 'gif')
+                                          SelectableText(
+                                            mensaje[
+                                                'message'], // El texto del mensaje
+                                            style: GoogleFonts.poppins(
+                                              color: isCurrentUser
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              formattedDate,
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.grey,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                            // const SizedBox(width: 4.0),
+                                            // const Icon(
+                                            //   Icons.done_all,
+                                            //   color: Colors.blue,
+                                            //   size: 16.0,
+                                            // ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  }
+                }
+              },
+            )),
             //MENU PARA MENSAJE
             Container(
               margin: const EdgeInsets.only(
@@ -384,8 +577,24 @@ class _ConversationGroupsScreenState extends State<ConversationGroupsScreen> {
                           FirebaseAuth.instance.currentUser!.photoURL;
                       String message = _messageController.text;
 
-                      print("Mensaje enviado ${message}");
-                      _messageController.clear();
+                      // Creacion de msj
+                      if (message.trim().isNotEmpty) {
+                        Map<String, dynamic> data = {
+                          'message': message,
+                          'senderUserName': userName,
+                          'hora': DateTime.now(),
+                          'senderId': userId,
+                          'type': 'text'
+                        };
+
+                        await groups.sendMessage(
+                            widget.groupData!["groupId"], data);
+
+                        print("Mensaje enviado ${message}");
+                        _messageController.clear();
+                      } else {
+                        print("No vacios");
+                      }
                     },
                     style: const ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll(Colors.green),

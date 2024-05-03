@@ -22,7 +22,7 @@ class _GroupsWidgetState extends State<GroupsWidget> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ConversationGroupsScreen()),
+          MaterialPageRoute(builder: (context) => ConversationGroupsScreen(groupData: widget.groupData)),
         );
       },
       child: Column(
