@@ -17,8 +17,8 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final UsersFirestore usersFirestore = UsersFirestore();
   final UsersFirestore _usersFirestore = UsersFirestore();
-  List<Map<String,dynamic>> _availableContacts = [];
-  final List<Map<String,dynamic>> _selectedContacts = [];
+  List<Map<String, dynamic>> _availableContacts = [];
+  final List<Map<String, dynamic>> _selectedContacts = [];
   GroupsFirestore groupsFirestore = GroupsFirestore();
 
   @override
@@ -37,11 +37,21 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
   void _loadAvailableContacts() async {
     String userIdCurrent = FirebaseAuth.instance.currentUser!.uid;
     String? userId = userIdCurrent;
-    List<Map<String,dynamic>> contacts =
+    List<Map<String, dynamic>> contacts =
         await _usersFirestore.obtenerContactosDisponibles(userId);
-    setState(() {
-      _availableContacts = contacts;
-    });
+    Map<String, dynamic>? currentUser;
+    try {
+      currentUser = contacts.firstWhere((contact) => contact['uid'] == userId);
+    } catch (e) {
+      print('El usuario actual no se encontró en la lista de contactos');
+    }
+
+    if (currentUser != null) {
+      setState(() {
+        _availableContacts = contacts;
+        _selectedContacts.add(currentUser!);
+      });
+    }
   }
 
   // Validamos el nombre del grupo
@@ -167,8 +177,15 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                                 style: GoogleFonts.poppins(
                                     color: Colors.white, fontSize: 14),
                               ),
-                              value: _selectedContacts.any((selectedContact) => selectedContact['nombre'] == contact['nombre']),
+                              value: _selectedContacts.any((selectedContact) =>
+                                  selectedContact['nombre'] ==
+                                  contact['nombre']),
                               onChanged: (bool? value) {
+                                // Deshabilitar el checkbox del usuario actual
+                                if (contact['uid'] ==
+                                    FirebaseAuth.instance.currentUser!.uid) {
+                                  return; // No realizar cambios si es el usuario actual
+                                }
                                 setState(() {
                                   if (value == true) {
                                     _selectedContacts.add(contact);
@@ -194,6 +211,11 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                                 if (_selectedContacts.length ==
                                     _availableContacts.length) {
                                   _selectedContacts.clear();
+                                  _selectedContacts.add(
+                                      _availableContacts.firstWhere((contact) =>
+                                          contact['uid'] ==
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid));
                                 } else {
                                   _selectedContacts.clear();
                                   _selectedContacts.addAll(_availableContacts);
@@ -207,25 +229,28 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            groupsFirestore.createGroup(_selectedContacts, _groupNameController.text).then((_) {
-                                FocusScope.of(context).unfocus();
-                            var snackbar = SnackBar(
-                              content: Text(
-                                'Grupo creado: ${_groupNameController.text}',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 14, color: Colors.white),
-                              ),
-                              duration: const Duration(seconds: 3),
-                              backgroundColor: Colors.green,
-                              behavior: SnackBarBehavior.floating,
-                              margin: const EdgeInsets.only(
-                                  bottom: 50, left: 20, right: 20),
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackbar);
-                            _groupNameController.clear();
-                            }
-                            );
+                            groupsFirestore
+                                .createGroup(_selectedContacts,
+                                    _groupNameController.text)
+                                .then((_) {
+                              FocusScope.of(context).unfocus();
+                              var snackbar = SnackBar(
+                                content: Text(
+                                  'Grupo creado: ${_groupNameController.text}',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 14, color: Colors.white),
+                                ),
+                                duration: const Duration(seconds: 3),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                                margin: const EdgeInsets.only(
+                                    bottom: 50, left: 20, right: 20),
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackbar);
+                              _groupNameController.clear();
+                              Navigator.pop(context);
+                            });
                           }
                         },
                         style: const ButtonStyle(
